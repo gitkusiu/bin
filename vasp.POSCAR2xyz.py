@@ -5,13 +5,29 @@ import numpy as np
 
 from ase.io.vasp import read_vasp
 from ase.io.xyz import write_xyz
+from optparse import OptionParser
+import re
 
-#print sys.argv[1]
+parser = OptionParser()
+parser.add_option("-c", "--comment", action="store", type="string")
+parser.add_option("-r", "--repeat", action="store", type="string")
+(options, args) = parser.parse_args()
 
-poscar = read_vasp(sys.argv[1])
+n = len(sys.argv)
 
+if(n < 2):
+    parser.print_help()
+else:
 
-if( len(sys.argv) > 2):
-	comm = sys.argv[2]
+    poscar_tmp = read_vasp(sys.argv[n-1])
 
-write_xyz("poscar.xyz", poscar, comment=comm)
+    if(options.repeat != None):
+        repetitions = map(int, re.findall(r'\d+', options.repeat) )
+        poscar = poscar_tmp*repetitions
+    else:
+        poscar = poscar_tmp
+
+    if( len(sys.argv) > 2):
+        comm = sys.argv[2]
+
+    write_xyz("poscar.xyz", poscar, comment=options.comment)
