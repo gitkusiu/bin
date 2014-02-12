@@ -22,12 +22,11 @@ else:
     poscar_tmp = read_vasp(sys.argv[n-1])
 
     if(options.repeat != None):
-        repetitions = map(int, re.findall(r'\d+', options.repeat) )
-        poscar = poscar_tmp*repetitions
+        net      = map(int, re.findall(r'\d+', options.repeat) )
+        poscar   = poscar_tmp*net
+        filename = "poscar."+str(net[0])+"x"+str(net[1])+"x"+str(net[2])+".xyz"
     else:
-        poscar = poscar_tmp
+        poscar   = poscar_tmp
+        filename = "poscar.xyz"
 
-    if( len(sys.argv) > 2):
-        comm = sys.argv[2]
-
-    write_xyz("poscar.xyz", poscar, comment=options.comment)
+    write_xyz(filename, poscar, comment=options.comment)

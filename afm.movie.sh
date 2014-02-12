@@ -2,18 +2,23 @@
 
 list=`ls -d [0-9].[0-9][0-9]|sort -r`
 
-rep=""
 if (( $# > 2 )) ; then
-    rep="-r "$1"x"$2"x"$3
+    rep=$1"x"$2"x"$3
+    XYZ_FILE=approaching.movie.$rep.xyz
+else
+    rep="1x1x1"
+    XYZ_FILE=approaching.movie.xyz
 fi
 
-rm approaching.movie.xyz
+#echo $XYZ_FILE
+rm $XYZ_FILE
 
 for dir in $list
 do
 	cd $dir
-	vasp.POSCAR2xyz.py -c $dir $rep CONTCAR
-	cat poscar.xyz >> ../approaching.movie.xyz
+	vasp.POSCAR2xyz.py -c $dir -r $rep CONTCAR
+	cat poscar.$rep.xyz >> ../$XYZ_FILE
+    rm poscar.$rep.xyz
 	cd ..
 done
 
