@@ -17,14 +17,14 @@ ini = int(  sys.argv[1])
 fin = int(  sys.argv[2])
 
 
-outcar = read_vasp_out('OUTCAR', slice(1,None,1))
+outcar = read_vasp_out('OUTCAR', slice(0,None,1))
 n = len(outcar)
 
 forces = outcar[n-1].get_forces()
 
 tip_force = [0.0,0.0,0.0]
 
-for i in range(ini,fin+1):
+for i in range(ini-1,fin):
     tip_force += forces[i]
 #    print i, tip_force
 print tip_force[0],tip_force[1],tip_force[2],
