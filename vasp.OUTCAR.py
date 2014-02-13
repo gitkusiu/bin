@@ -12,14 +12,11 @@ from optparse import OptionParser
 
 
 parser = OptionParser()
-parser.add_option("--forces"   , action="store_true")
-#parser.add_option("--afm_forces"   , action="store_true")
-parser.add_option("--xyz",  action="store_true")
-
-#parser.add_option("-afm",   "--afm_forces", action="store", type="string")
-parser.add_option("-s",     "--steps",      action="store", type="string")
-parser.add_option("-a",     "--atoms",      action="store", type="string")
-parser.add_option("-r",     "--repeat",     action="store", type="string")
+parser.add_option("-g", "--get",     action="store", type="string", default="positions",      help="what kind of data shoud be extracted")
+parser.add_option("-f", "--format",     action="store", type="string", default="xyz",           help="format of positions file: xyz ")
+parser.add_option("-a", "--atoms",      action="store", type="int",    default=[-1,-1],         help="specify range of atoms", nargs=2)
+parser.add_option("-s", "--steps",      action="store", type="int",    default=[-1,-1],         help="specify range of steps", nargs=2)
+parser.add_option("-p", "--periods",    action="store", type="int",    default=[1,1,1],       help="repetition of the unit cell", nargs=3)
 (options, args) = parser.parse_args()
 
 num = len(sys.argv)
@@ -28,109 +25,67 @@ num = len(sys.argv)
 if(num < 2):
     parser.print_help()
 else:
-    outcar = read_vasp_out(sys.argv[num-1], slice(1,None,1))
-    n = len(outcar)
+    outcar = read_vasp_out(sys.argv[num-1], slice(0,None,1))
 
 # --------------- step index range ------------------------
-    if(options.steps != None):
-        steps = map(int, re.findall(r'\d+', options.steps) )
-        no_steps = len(steps)
-        if(no_steps > 0 & no_steps < 3):
-            if( no_steps == 2 ):
-                ni = int(steps[0])
-                nf = int(steps[1])
-            elif( no_steps == 1 & int(steps[0]) > 0 ):
-                ni = 1
-                nf = int(steps[0])
+    n = len(outcar)
+    s = options.steps
+    if(s[0] == -1): # deafult case: all steps
+        if( s[1] == -1):
+            s = (1, n)
         else:
-            ni = 1
-            nf = n
-    else:
-        ni = 1
-        nf = n
+            s = (n,n)
+    elif( s[0] > n or s[1] > n ):
+        print "ERROR: Step range is larger than number of steps in OUTCAR"
+        exit()
+    elif( s[0] > s[1] ):
+        print "ERROR: Max step is smaler that Min step"
+        exit()
 
 
 # --------------- atoms index range ------------------------
     natoms = outcar[0].get_number_of_atoms()
-#    print natoms
-    if(options.atoms != None):
-        i_atoms = map(int, re.findall(r'\d+', options.atoms) )
-        i_atoms_len = len(i_atoms)
-        if(i_atoms_len > 0 & i_atoms_len < 3):
-            if( i_atoms_len == 2 ):
-                ai = int(i_atoms[0])
-                af = int(i_atoms[1])
-            elif( i_atoms_len == 1 & int(i_atoms[0]) > 0 ):
-                ai = 1
-                af = int(i_atoms[0])
-        else:
-            ai = 1
-            af = natoms
-    else:
-        ai = 1
-        af = natoms
+    a = options.atoms
+    if( a[0] > natoms or a[1] > natoms ):
+        print "ERROR: Atoms range is larger than number of steps in OUTCAR"
+        exit()
+    elif( a[0] > a[1] ):
+        print "ERROR: Max step is smaler that Min step"
+        exit()
+    elif(a[0] == -1): # deafult case: we change all atoms
+        a[0] = 1
+        a[1] = natoms
+
+    
+    p = options.periods
+    if( p[0] <= 0 and p[1] <= 0 and p[2] <= 0 ):
+        print "ERROR: At least one of period is not positive"
+        exit()
+
+    for i in range(s[0],s[1]+1):
+        step = outcar[i-1]
 
 
-
-# --------------- nit cell repetition ------------------------
-    if(options.repeat != None):
-        net      = map(int, re.findall(r'\d+', options.repeat) )
-    else:
-        net = [1,1,1]
-
-#    print n, ni, nf
-#    print net
-
-    filenamexyz = 'outcar_steps.'+str(ni)+'-'+str(nf)+'_atoms.'+str(ai)+'-'+str(af)+'.xyz'
-    cat_outcar="cat outcar.xyz >> " + filenamexyz
-
-    for i in range(ni,nf+1):
-#        print i
-
-        step_tmp = outcar[i-1]
-        step = step_tmp*net
-
-        if(options.xyz):
-            comm = "step no. " + str(i) + " TOTEN = " + str(step_tmp.get_total_energy())
-            write_xyz("outcar.xyz", step, comment=comm )
-            os.system(cat_outcar);
-            os.system("rm outcar.xyz");
-
-#        if(options.afm_forces):
-#            tip_force = [0.0,0.0,0.0]
-#            for j in range(ai,af+1):
-#                tip_force += forces[i]
-#        #    print i, tip_force
-#    print tip_force[0],tip_force[1],tip_force[2],
-
-#    elif(options.acction == "forces"):
-#        if(options.steps == None):
-#            ni = 0
-#            nf = n-1
-#        else:
-#            steps = map(int, re.findall(r'\d+', options.steps) )
-#            print steps
-#            if(len(steps) == 2):
-#                ni = steps[0]
-#                nf = steps[1]
+        if(options.get == "positions" or options.get == "pos"):
+            comm = "step no. " + str(i) + " TOTEN = " + str(step.get_total_energy())
+            if(p == [1,1,1]):
+                write_xyz(sys.stdout,step,comment=comm)
+            else:
+                step_period = step*p
+                write_xyz(sys.stdout,step_period,comment=comm)
 
 
+        if(options.get == "forces"):
+            forces = step.get_forces()
+            for j in range(a[0],a[1]+1):
+                print j , forces[j-1][0], forces[j-1][1], forces[j-1][2]
+            print " "
 
 
-#    for i in range(ni, nf+1):
-#            print i
+        if(options.get == "force"):
+            forces = step.get_forces()
+            tip_force = [0.0,0.0,0.0]
+            for j in range(a[0],a[1]+1):
+                tip_force += forces[j-1]
+            print tip_force[0],tip_force[1],tip_force[2]
 
-#narg = len(sys.argv)
-
-#if( narg < 2 ):
-#	print "You have passed " + str(narg-1) + " arguments to the script"
-#	print "This script needs 2 parameters"
-#	print "Scrips exits"
-#	exit()
-
-#arg1 = sys.argv[1]
-
-#if( arg1 == "conv"):
-#    print "Brawo.\n";
-#elif(True):
-#    print "Only single-digit numbers are allowed\n";

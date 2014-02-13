@@ -5,7 +5,8 @@ list=`ls -d [0-9].[0-9][0-9]|sort -r`
 for dir in $list
 do
 	cd $dir
-	force=`vasp.AFM.tip.force.py $1 $2`
+	force=`vasp.OUTCAR.py --get force --atoms $1 $2 --steps -1 1 OUTCAR`
+#	force=`vasp.AFM.tip.force.py $1 $2`
 	echo -e $dir '\t' $force
 	cd ..
 done
