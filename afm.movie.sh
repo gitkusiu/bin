@@ -15,7 +15,6 @@ rm $XYZ_FILE $XYZ_FILE.gz
 for dir in $list
 do
 	cd $dir
-#	vasp.POSCAR2xyz.py -c $dir -r $rep CONTCAR
 	vasp.POSCAR.py --comment $dir periods $1 $2 $3 -f xyz CONTCAR >> ../$XYZ_FILE
 	cd ..
 done
