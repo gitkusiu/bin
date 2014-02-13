@@ -25,6 +25,14 @@ num = len(sys.argv)
 if(num < 2):
     parser.print_help()
 else:
+    if(options.get == "conv"):
+        for line in open(sys.argv[num-1]):
+            if "reached required accuracy" in line:
+                print line
+                exit()
+        print "Error: VASP did not reached required accuracy"
+        exit()
+
     outcar = read_vasp_out(sys.argv[num-1], slice(0,None,1))
 
 # --------------- step index range ------------------------
