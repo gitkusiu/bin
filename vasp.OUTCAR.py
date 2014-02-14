@@ -4,6 +4,7 @@ import sys
 import numpy as np 
 import re
 import os
+from math import *
 
 from ase.io.vasp import read_vasp_out
 from ase.io.xyz import write_xyz
@@ -30,8 +31,9 @@ else:
             if "reached required accuracy" in line:
                 print line
                 exit()
-        print "Error: VASP did not reached required accuracy"
-        exit()
+        print "Error: VASP did not reached required accuracy. Maximal force is "
+        options.get   = "max_force"
+        options.steps = [-1,1]
 
     outcar = read_vasp_out(sys.argv[num-1], slice(0,None,1))
 
@@ -97,3 +99,15 @@ else:
                 tip_force += forces[j-1]
             print tip_force[0],tip_force[1],tip_force[2]
 
+
+        if(options.get == "max_force"):
+            forces    = np.array(step.get_forces())
+            fix_atoms = step.constraints[0].index
+            max_force = 0.0
+            for j in range(a[0],a[1]+1):
+                if((j in fix_atoms) != True):
+                    f = forces[j-1]
+                    norm = sqrt(f[0]**2 + f[1]**2 + f[2]**2)
+                    if ( norm > max_force):
+                        max_force = norm
+            print "\t",max_force
