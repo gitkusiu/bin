@@ -27,7 +27,11 @@ if(num < 2):
     parser.print_help()
 else:
     if(options.get == "conv"):
+        ediffg = 0.0
         for line in open(sys.argv[num-1]):
+            if "EDIFFG" in line:
+               ediffg = float(line.split()[2])
+               print "EDIFFG = ", ediffg, ":       "
             if "reached required accuracy" in line:
                 print line
                 exit()
