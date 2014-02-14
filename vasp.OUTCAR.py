@@ -39,6 +39,14 @@ else:
         options.get   = "max_force"
         options.steps = [-1,1]
 
+    elif(options.get == "energy"):
+        toten = 0.0
+        for line in open(sys.argv[num-1]):
+            if "TOTEN" in line:
+                toten = float(line.split()[4])
+        print toten
+        exit()
+
     outcar = read_vasp_out(sys.argv[num-1], slice(0,None,1))
 
 # --------------- step index range ------------------------
