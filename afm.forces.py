@@ -51,7 +51,7 @@ for i in range(len(d)):
 
 f_diff = np.zeros(len(d))
 for i in range(1,len(d)-1):
-    f_diff[i] = (toten[i+1]-toten[i-1])/(d[i+1]-d[i-1])
+    f_diff[i] = -(toten[i+1]-toten[i-1])/(d[i+1]-d[i-1])
 
 
 for i in range(1,len(d)-1):
