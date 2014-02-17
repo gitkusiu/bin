@@ -14,8 +14,6 @@ def isfloat(x):
     else:
         return True
 
-
-
 arg2 = sys.argv[2]
 
 

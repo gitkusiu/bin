@@ -11,11 +11,12 @@ from optparse import OptionParser
 
 
 parser = OptionParser()
-parser.add_option("-f", "--format",     action="store", type="string", default="POSCAR",      help="format of the output file: POSCAR, (xyz in preparation)")
-parser.add_option("-a", "--atoms",      action="store", type="int",    default=[-1,-1],       help="specify the atoms to whcih changes (translation rotation etc. will be made)", nargs=2)
-parser.add_option("-p", "--periods",    action="store", type="int",    default=[1,1,1],       help="repetition of the unit cell", nargs=3)
-parser.add_option("-T", "--Translation",action="store", type="float",  default=[0.0,0.0,0.0], help="ss", nargs=3)
-parser.add_option("-c", "--comment",    action="store", type="string", default=" ")
+parser.add_option("-f", "--format",           action="store", type="string", default="POSCAR",      help="format of the output file: POSCAR, (xyz in preparation)")
+parser.add_option("-a", "--atoms",            action="store", type="int",    default=[-1,-1],       help="specify the atoms to whcih changes (translation rotation etc. will be made)", nargs=2)
+parser.add_option("-p", "--periods",          action="store", type="int",    default=[1,1,1],       help="repetition of the unit cell", nargs=3)
+parser.add_option("-T", "--Translation",      action="store", type="float",  default=[0.0,0.0,0.0], help="ss", nargs=3)
+parser.add_option("-u", "--cell_scale",       action="store", type="float",  default=[1.0,1.0,1.0],           help="unit cell scalling factor", nargs=3)
+parser.add_option("-c", "--comment",          action="store", type="string", default=" ")
 (options, args) = parser.parse_args()
 
 #print parser.parse_args()
@@ -46,6 +47,13 @@ else:
     if( is_translation_nonzero and is_there_any_atoms_to_translate ):
         for i in range(a[0]-1, a[1]):
             poscar.arrays['positions'][i] +=  t
+
+
+    # --------------- unit cell scaling facto -----------------
+    u = options.cell_scale
+    if( u != [1.0, 1.0, 1.0] ):
+        cell = poscar.get_cell()
+        poscar.set_cell(cell*u)
 
     # --------------- Periodic repetitions -----------------
     p = options.periods
