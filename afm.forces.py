@@ -35,7 +35,6 @@ dirs.sort()
 toten = []
 f = []
 for i in range(len(d)):
-
     outcar=dirs[i]+"/OUTCAR"
     cmd = "vasp.OUTCAR.py --get energy "+outcar
     fin, fout = os.popen4(cmd)
@@ -43,7 +42,8 @@ for i in range(len(d)):
 
     arg1 = sys.argv[1]
     arg2 = sys.argv[2]
-    cmd = "vasp.OUTCAR.py --get force --atoms " + arg1 + " " + arg2 + " --steps -1 1 " + outcar
+#    cmd = "vasp.OUTCAR.py --get force --atoms " + arg1 + " " + arg2 + " --steps -1 1 " + outcar
+    cmd = "vasp.OUTCAR.force.sh " + arg1 + " " + arg2 + " " + outcar
     fin, fout = os.popen4(cmd)
     ff = fout.read().split()
     if(isfloat(ff[0]) and isfloat(ff[1]) and isfloat(ff[2])):
