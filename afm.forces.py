@@ -28,8 +28,8 @@ for i in range(len(list)):
         dirs.append(tmp)
 d.sort()
 dirs.sort()
-print d
-print dirs
+#print d
+#print dirs
 
 ######## read TOTENs from corresponding OUTCARS
 toten = []
@@ -46,7 +46,10 @@ for i in range(len(d)):
     cmd = "vasp.OUTCAR.py --get force --atoms " + arg1 + " " + arg2 + " --steps -1 1 " + outcar
     fin, fout = os.popen4(cmd)
     ff = fout.read().split()
-    f.append( [float(ff[0]), float(ff[1]),float(ff[2])]   )
+    if(isfloat(ff[0]) and isfloat(ff[1]) and isfloat(ff[2])):
+        f.append( [float(ff[0]), float(ff[1]),float(ff[2])] )
+    else:
+        f.append([0.0,0.0,0.0])
 
 
 f_diff = np.zeros(len(d))
@@ -55,5 +58,5 @@ for i in range(1,len(d)-1):
 
 
 for i in range(1,len(d)-1):
-    print d[i], f[i][0], f[i][1], f[i][2], f_diff[i]
+    print d[i], "\t", f[i][0], "\t", f[i][1], "\t", f[i][2], "\t", f_diff[i]
 
