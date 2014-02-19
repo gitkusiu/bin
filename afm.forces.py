@@ -40,16 +40,17 @@ for i in range(len(d)):
     fin, fout = os.popen4(cmd)
     toten.append(float(fout.read()) )
 
-    arg1 = sys.argv[1]
-    arg2 = sys.argv[2]
+#    arg1 = sys.argv[1]
+#    arg2 = sys.argv[2]
 #    cmd = "vasp.OUTCAR.py --get force --atoms " + arg1 + " " + arg2 + " --steps -1 1 " + outcar
-    cmd = "vasp.OUTCAR.force.sh " + arg1 + " " + arg2 + " " + outcar
-    fin, fout = os.popen4(cmd)
-    ff = fout.read().split()
-    if(isfloat(ff[0]) and isfloat(ff[1]) and isfloat(ff[2])):
-        f.append( [float(ff[0]), float(ff[1]),float(ff[2])] )
-    else:
-        f.append([0.0,0.0,0.0])
+##    cmd = "vasp.OUTCAR.force.sh " + arg1 + " " + arg2 + " " + outcar
+#    fin, fout = os.popen4(cmd)
+#    ff = fout.read().split()
+#    print ff
+#    if(isfloat(ff[0]) and isfloat(ff[1]) and isfloat(ff[2])):
+#        f.append( [float(ff[0]), float(ff[1]),float(ff[2])] )
+#    else:
+#        f.append([0.0,0.0,0.0])
 
 
 f_diff = np.zeros(len(d))
@@ -58,5 +59,5 @@ for i in range(1,len(d)-1):
 
 
 for i in range(1,len(d)-1):
-    print d[i], "\t", f[i][0], "\t", f[i][1], "\t", f[i][2], "\t", f_diff[i]
-
+#    print d[i], "\t", f[i][0], "\t", f[i][1], "\t", f[i][2], "\t", f_diff[i]
+    print d[i], "\t", f_diff[i]

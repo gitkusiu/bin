@@ -31,11 +31,11 @@ else:
         for line in open(sys.argv[num-1]):
             if "EDIFFG" in line:
                 ediffg = float(line.split()[2])
-                print "EDIFFG = ", ediffg, ":       "
-            if "reached required accuracy" in line:
-                print line
+                print "EDIFFG = ", ediffg, ":\t",
+            if "reached required accuracy" in line: 
+                print "accuracy is reached     :\t"
                 exit()
-        print "Error: VASP did not reached required accuracy. Maximal force is "
+        print "accuracy is NOT reached :\tFmax =",
         options.get   = "max_force"
         options.steps = [-1,1]
 
@@ -125,6 +125,6 @@ else:
                         norm = sqrt(f[0]**2 + f[1]**2 + f[2]**2)
                         if ( norm > max_force):
                             max_force = norm
-                print "\t",max_force
+                print max_force
     else:
         print "Error: OUTCAR does not contain sufficient amount of information. Number of ionic steps = 0."
