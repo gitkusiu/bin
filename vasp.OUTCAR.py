@@ -33,8 +33,8 @@ else:
                 ediffg = float(line.split()[2])
                 print "EDIFFG = ", ediffg, ":\t",
             if "reached required accuracy" in line: 
-                print "accuracy is reached     :\t"
-                exit()
+                print ("accuracy is reached     :\t")
+                sys.exit()
         print "accuracy is NOT reached :\tFmax =",
         options.get   = "max_force"
         options.steps = [-1,1]
@@ -45,7 +45,7 @@ else:
             if "TOTEN" in line:
                 toten = float(line.split()[4])
         print toten
-        exit()
+        sys.exit()
 
     outcar = read_vasp_out(sys.argv[num-1], slice(0,None,1))
 
