@@ -11,6 +11,15 @@ from ase.calculators.vasp import VaspDos
 
 from optparse import OptionParser
 
+
+####################################################
+#
+# function get_total_site_dos(doscar, atom):
+#
+#          extract a teble of total DOS sum over all 
+#          orbitals
+#
+####################################################
 def get_total_site_dos(doscar, atom):
 
     n_of_orb = len(doscar._site_dos[atom]) - 1
@@ -20,8 +29,17 @@ def get_total_site_dos(doscar, atom):
         dos = dos + doscar.site_dos(atom,i)
     return dos
 
-def get_site_dos(doscar, atom, l=-1):
+####################################################
+#
+# function get_site_dos(doscar, atom, l=-1) :
+#
+#          extract a teble of DOS of an orbital 'l' 
+#          located on particular atom
+#
+####################################################
+def get_site_dos_table(doscar, atom, l=-1):
 
+    atom = atom-1
     n        = len(doscar._site_dos)
     n_of_orb = len(doscar._site_dos[atom])-1
 
@@ -36,6 +54,9 @@ def get_site_dos(doscar, atom, l=-1):
         elif(l==2):
             for i in [8,9,10,11,12,13,14,15,16,17]:
                 dos = dos + doscar.site_dos(atom,i)
+        elif(l==3):
+            for i in [8,9,10,11,12,13,14,15,16,17]:
+                dos = dos + doscar.site_dos(atom,i)
     elif(l == -1):
         dos = doscar.site_dos(atom,0)
         for i in range(1,n_of_orb):
@@ -43,6 +64,24 @@ def get_site_dos(doscar, atom, l=-1):
         return dos
     else:
         print "Error"
+
+
+
+def get_l(number_of_orbitals, spin):
+    n = number_of_orbitals
+    if(spin):
+        n = n/2
+    if(n == 1):
+        return 0
+    elif(n == 4):
+        return 1
+    elif(n == 9):
+        return 2
+    elif(n == 18):
+        return 3
+    else:
+        print "ERROR: Unknown number of orbitals"
+
 
 #def get_site_dos(n, doscar, orbital):
 #    
@@ -71,48 +110,60 @@ def get_site_dos(doscar, atom, l=-1):
 
 
 parser = OptionParser()
-parser.add_option("-f", "--format",           action="store", type="string", default="POSCAR",      help="format of the output file: POSCAR, (xyz in preparation)")
-parser.add_option("-a", "--atoms",            action="store", type="int",    default=[-1,-1],       help="specify the atoms to whcih changes (translation rotation etc. will be made)", nargs=2)
-parser.add_option("-p", "--periods",          action="store", type="int",    default=[1,1,1],       help="repetition of the unit cell", nargs=3)
-parser.add_option("-T", "--Translation",      action="store", type="float",  default=[0.0,0.0,0.0], help="ss", nargs=3)
-parser.add_option("-u", "--cell_scale",       action="store", type="float",  default=[1.0,1.0,1.0],           help="unit cell scalling factor", nargs=3)
-parser.add_option("-c", "--comment",          action="store", type="string", default=" ")
+parser.add_option("-g", "--get",              action="store",       type="string", default="site_dos",      help="what kind of DOS data do you what to print: total DOS, sides DOS, ")
+parser.add_option("-s", "--spin",             action="store",       type="string", default="up_down",      help="what kind of DOS data do you what to print: total DOS, sides DOS, ")
+parser.add_option(      "--ferm",             action="store",       type="float",  default="0.0",          help="If this value is given. Ferme level is shifted to 0.0")
+parser.add_option(      "--per_atom",         action="store_false",                default=False,        help="...")
+parser.add_option("-a", "--atoms",            action="store", type="int",    default=[-1,-1],        help="specify atoms for which atoms will be printed", nargs=2)
+parser.add_option("-l", "--orbital",         action="store",  type="int",    default=-1,            help="specify orbitals for which atoms will be printed", nargs=1)
 (options, args) = parser.parse_args()
 
 num = len(sys.argv)
 
-doscar=VaspDos("DOSCAR")
+if(num < 2):
+    parser.print_help()
+else:
+    doscar=VaspDos(sys.argv[num-1])
 
+    # get number of atoms
+    dos_size = len(doscar._site_dos[0][0])
+    number_of_atoms = len(doscar._site_dos)
+    energy   = doscar._get_energy()
 
-n = len(doscar._site_dos)
+    if(dos_size != len(energy)):
+        print "Error: The DOS array size (",dos_size,") is difrent than the energy array size (", len(energy) ,")"
 
-#print len(doscar._site_dos[0])
+    # atoms seting
+    a = []
+    if(options.atoms[0] == -1 and options.atoms[1] == -1):
+        a = [1, number_of_atoms]
+    else:
+        a = options.atoms
+    o = options.orbital
 
-e   = doscar._get_energy()
+    dos = []
+    if(options.get == "total_dos"):
+        dos_ud = doscar._get_dos()
+        if(options.spin == "up_down"):
+            dos_up_down = doscar._get_dos()
+            dos = dos_up_down[0] + dos_up_down[1]
+        elif(options.spin == "up"):
+            dos = doscar._get_dos()[0]
+        elif(options.spin == "down"):
+            dos = doscar._get_dos()[1]
+    elif(options.get == "site_dos"):
+        dos = get_site_dos_table(doscar, a[0], o)
+        for i in range(a[0]+1, a[1]):
+            dos = dos + get_site_dos_table(doscar, i, o)
 
+    for i in range(len(energy)):
+        l_en  = energy[i]-options.ferm
+        if(options.per_atom == "False"):
+            l_dos = dos[i]
+        else:
+            l_dos = dos[i]/float(a[1]-a[0]+1)
+        print l_en,l_dos
 
-#### total DOS as a summ over sites DOS'es
-dos_summ_of_sites = get_total_site_dos(doscar, 0)
-for j in range(1,n):
-    dos_summ_of_sites = dos_summ_of_sites + get_total_site_dos(doscar, j)
-
-
-#### site total DOSes 
-dos_on_sites = []
-for j in range(n):
-    dos_on_sites.append(get_site_dos(doscar, j))
-
-
-#### total DOS 
-dos_ud = doscar._get_dos()
-dos = dos_ud[0] + dos_ud[1]
-
-for i in range(len(e)):
-    print e[i],
-    for j in range(n):
-        print dos_on_sites[j][i],
-    print ""
-#    print dos_summ_of_sites[i], dos[i]
 
 
 
