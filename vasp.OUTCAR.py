@@ -120,7 +120,7 @@ else:
                 fix_atoms = step.constraints[0].index
                 max_force = 0.0
                 for j in range(a[0],a[1]+1):
-                    if((j in fix_atoms) != True):
+                    if((j-1 in fix_atoms) != True):
                         f = forces[j-1]
                         norm = sqrt(f[0]**2 + f[1]**2 + f[2]**2)
                         if ( norm > max_force):
