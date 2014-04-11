@@ -17,6 +17,10 @@ afm.magnet.sh $1 $2 > approaching.magnet.tip.dat
 afm.charge.sh 1 $last_sur > approaching.charge.surface.dat
 afm.magnet.sh 1 $last_sur > approaching.magnet.surface.dat
 
+afm.movie.sh
+afm.movie.sh 3 3 1
+
+
 
 
 
