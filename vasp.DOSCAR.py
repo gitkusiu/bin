@@ -11,6 +11,8 @@ from ase.calculators.vasp import VaspDos
 
 from optparse import OptionParser
 
+import copy
+
 
 ####################################################
 #
@@ -39,11 +41,12 @@ def get_total_site_dos(doscar, atom):
 ####################################################
 def get_site_dos_table(doscar, atom, l=-1):
 
-    atom = atom-1
+#    atom = atom-1
     n        = len(doscar._site_dos)
-    n_of_orb = len(doscar._site_dos[atom])-1
+    n_of_orb = len(doscar._site_dos[atom-1])-1
+    n_dos    = len(doscar._site_dos[atom-1][0])
 
-    dos = [0.0]*n
+    dos = [0.0]*n_dos
     if(n_of_orb >= l and 0 <= l  ):
         if(l==0):
             for i in [0,1]:
@@ -58,9 +61,11 @@ def get_site_dos_table(doscar, atom, l=-1):
             for i in [8,9,10,11,12,13,14,15,16,17]:
                 dos = dos + doscar.site_dos(atom,i)
     elif(l == -1):
-        dos = doscar.site_dos(atom,0)
+        dos = copy.deepcopy(doscar.site_dos(atom-1,0))
+#        print "KK",n, n_of_orb, 
         for i in range(1,n_of_orb):
-            dos = dos + doscar.site_dos(atom,i)
+#            print i
+            dos = dos + doscar.site_dos(atom-1,i)
         return dos
     else:
         print "Error"
@@ -110,10 +115,10 @@ def get_l(number_of_orbitals, spin):
 
 
 parser = OptionParser()
-parser.add_option("-g", "--get",              action="store",       type="string", default="site_dos",      help="what kind of DOS data do you what to print: total DOS, sides DOS, ")
-parser.add_option("-s", "--spin",             action="store",       type="string", default="up_down",      help="what kind of DOS data do you what to print: total DOS, sides DOS, ")
+parser.add_option("-g", "--get",              action="store",       type="string", default="site_dos",     help="what kind of DOS data do you what to print: site_dos (default) - print, total_dos - ")
+parser.add_option("-s", "--spin",             action="store",       type="string", default="up_down",      help="Fermi level ")
 parser.add_option(      "--ferm",             action="store",       type="float",  default="0.0",          help="If this value is given. Ferme level is shifted to 0.0")
-parser.add_option(      "--per_atom",         action="store_false",                default=False,        help="...")
+parser.add_option(      "--per_atom",         action="store_false",                default=False,          help="If DOS should be devided by number of atoms")
 parser.add_option("-a", "--atoms",            action="store", type="int",    default=[-1,-1],        help="specify atoms for which atoms will be printed", nargs=2)
 parser.add_option("-l", "--orbital",         action="store",  type="int",    default=-1,            help="specify orbitals for which atoms will be printed", nargs=1)
 (options, args) = parser.parse_args()
@@ -141,7 +146,8 @@ else:
         a = options.atoms
     o = options.orbital
 
-    dos = []
+    dos = [0.0]*len(energy)
+    doses = []
     if(options.get == "total_dos"):
         dos_ud = doscar._get_dos()
         if(options.spin == "up_down"):
@@ -152,17 +158,22 @@ else:
         elif(options.spin == "down"):
             dos = doscar._get_dos()[1]
     elif(options.get == "site_dos"):
-        dos = get_site_dos_table(doscar, a[0], o)
-        for i in range(a[0]+1, a[1]):
+        dos = dos + get_site_dos_table(doscar, a[0], o)
+        for i in range(a[0]+1, a[1]+1):
             dos = dos + get_site_dos_table(doscar, i, o)
+
+
+#    for i in range(len(doses)):
+#        dos = dos + doses[i]
 
     for i in range(len(energy)):
         l_en  = energy[i]-options.ferm
-        if(options.per_atom == "False"):
-            l_dos = dos[i]
-        else:
-            l_dos = dos[i]/float(a[1]-a[0]+1)
-        print l_en,l_dos
+        l_dos = dos[i]
+        if(options.per_atom == "True"):
+            l_dos = l_dos/float(a[1]-a[0]+1)
+
+#        print l_en,l_dos
+        print l_en,dos[i]
 
 
 
