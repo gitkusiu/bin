@@ -1,63 +1,29 @@
 #!/usr/bin/python
+from os.path    import isdir
+from os         import listdir
+from re         import search
+from numpy      import zeros
+from subprocess import check_output
 
-import os
-import sys
-#import re
-import numpy as np 
-import subprocess
-
-def isfloat(x):
-    try:
-        a = float(x)
-    except ValueError:
-        return False
-    else:
-        return True
-
-arg2 = sys.argv[2]
-
-
-######## get all directory with number names
-list=os.listdir("./")
-d = []
-dirs= []
-for i in range(len(list)):
-    tmp = list[i]
-    if(isfloat(tmp) == True):
-        d.append(float(tmp))
-        dirs.append(tmp)
-d.sort()
-dirs.sort()
-#print d
-#print dirs
+######## get all directory with a names such as 1.00, 2.23 ... etc
+list =  listdir("./")
+z = [f for f in list if(isdir(f) and search(r'\d[.]\d\d$', f))]
+z.sort()
 
 ######## read TOTENs from corresponding OUTCARS
-toten = []
-f = []
-for i in range(len(d)):
-    outcar=dirs[i]+"/OUTCAR"
-    cmd = "vasp.OUTCAR.py --get energy "+outcar
-    fin, fout = os.popen4(cmd)
-    toten.append(float(fout.read()) )
+Etot = []
+for dir in z:
+    outcar = dir+"/OUTCAR"
+    cmd    = "vasp.OUTCAR.py --get energy "+outcar
+    fout   =  check_output(cmd, shell=True)
+    Etot.append(float(fout))
 
-#    arg1 = sys.argv[1]
-#    arg2 = sys.argv[2]
-#    cmd = "vasp.OUTCAR.py --get force --atoms " + arg1 + " " + arg2 + " --steps -1 1 " + outcar
-##    cmd = "vasp.OUTCAR.force.sh " + arg1 + " " + arg2 + " " + outcar
-#    fin, fout = os.popen4(cmd)
-#    ff = fout.read().split()
-#    print ff
-#    if(isfloat(ff[0]) and isfloat(ff[1]) and isfloat(ff[2])):
-#        f.append( [float(ff[0]), float(ff[1]),float(ff[2])] )
-#    else:
-#        f.append([0.0,0.0,0.0])
+######### calculate F_z = -dE_tot/dz
+Fz = zeros(len(z))
+for i in range(1,len(z)-1):
+    dz    = float(z[i+1]) - float(z[i-1])
+    dEtot = Etot[i+1]-Etot[i-1]
+    Fz[i] = -(dEtot/dz)
 
-
-f_diff = np.zeros(len(d))
-for i in range(1,len(d)-1):
-    f_diff[i] = -(toten[i+1]-toten[i-1])/(d[i+1]-d[i-1])
-
-
-for i in range(1,len(d)-1):
-#    print d[i], "\t", f[i][0], "\t", f[i][1], "\t", f[i][2], "\t", f_diff[i]
-    print d[i], "\t", f_diff[i]
+for i in range(1,len(z)-1):
+    print z[i], "\t", Fz[i]
