@@ -15,8 +15,8 @@ Etot = []
 for dir in z:
     outcar = dir+"/OUTCAR"
     cmd    = "vasp.OUTCAR.py --get energy "+outcar
-    fout   =  check_output(cmd, shell=True)
-    Etot.append(float(fout))
+    out   =  check_output(cmd, shell=True)
+    Etot.append(float(out))
 
 ######### calculate F_z = -dE_tot/dz
 Fz = zeros(len(z))
