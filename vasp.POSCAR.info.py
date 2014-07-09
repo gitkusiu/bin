@@ -1,7 +1,6 @@
 #!/usr/bin/python
 
 import sys
-import numpy as np 
 
 from ase.io.vasp import read_vasp
 from ase.io.vasp import write_vasp
