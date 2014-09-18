@@ -51,7 +51,7 @@ else:
     # --------------- Translations -----------------
     t = options.Translation
     is_translation_nonzero          = (t != (0.0,0.0,0.0))
-    is_there_any_atoms_to_translate = (a[1]-a[0] > 0)
+    is_there_any_atoms_to_translate = (a[1]-a[0] >= 0)
     if( is_translation_nonzero and is_there_any_atoms_to_translate ):
         for i in range(a[0]-1, a[1]):
             poscar.arrays['positions'][i] +=  t
