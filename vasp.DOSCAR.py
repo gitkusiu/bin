@@ -115,12 +115,12 @@ def get_l(number_of_orbitals, spin):
 
 
 parser = OptionParser()
-parser.add_option("-g", "--get",              action="store",       type="string", default="site_dos",     help="what kind of DOS data do you what to print: site_dos (default) - print, total_dos - ")
-parser.add_option("-s", "--spin",             action="store",       type="string", default="up_down",      help="Fermi level ")
+parser.add_option("-g", "--get",              action="store",       type="string", default="total_dos",     help="what kind of DOS data do you what to print: site_dos (default) - print, total_dos - ")
+parser.add_option("-s", "--spin",             action="store",       type="string", default="+-",      help="Fermi level ")
 parser.add_option(      "--ferm",             action="store",       type="float",  default="0.0",          help="If this value is given. Ferme level is shifted to 0.0")
 parser.add_option(      "--per_atom",         action="store_false",                default=False,          help="If DOS should be devided by number of atoms")
 parser.add_option("-a", "--atoms",            action="store", type="int",    default=[-1,-1],        help="specify atoms for which atoms will be printed", nargs=2)
-parser.add_option("-l", "--orbital",         action="store",  type="int",    default=-1,            help="specify orbitals for which atoms will be printed", nargs=1)
+parser.add_option("-o", "--orbital",         action="store",  type="string",    default="all",            help="specify orbitals for which atoms will be printed", nargs=1)
 (options, args) = parser.parse_args()
 
 num = len(sys.argv)
@@ -144,27 +144,56 @@ else:
         a = [1, number_of_atoms]
     else:
         a = options.atoms
-    o = options.orbital
-
+        options.get = "site_dos"
+#    o = options.orbital
     dos = [0.0]*len(energy)
     doses = []
-    if(options.get == "total_dos"):
+    sign = 1.0
+    
+    if options.spin == "-" : sign = -1.0
+    if  options.get == "total_dos" :
         dos_ud = doscar._get_dos()
-        if(options.spin == "up_down"):
-            dos_up_down = doscar._get_dos()
-            dos = dos_up_down[0] + dos_up_down[1]
-        elif(options.spin == "up"):
-            dos = doscar._get_dos()[0]
-        elif(options.spin == "down"):
-            dos = doscar._get_dos()[1]
-    elif(options.get == "site_dos"):
-        dos = dos + get_site_dos_table(doscar, a[0], o)
-        for i in range(a[0]+1, a[1]+1):
-            dos = dos + get_site_dos_table(doscar, i, o)
-
-
-#    for i in range(len(doses)):
-#        dos = dos + doses[i]
+        if   options.spin == "+-" : dos = dos_ud[0]+dos_ud[1]
+        elif options.spin == "+"  : dos = dos_ud[0]
+        elif options.spin == "-"  : dos = dos_ud[1]
+    elif options.get == "site_dos" :
+        s_up   = ["s+"]
+        p_up   = ["py+",  "pz+",  "px+"]
+        d_up   = ["dxy+", "dyz+", "dz2+", "dxz+", "dxz+"]
+        f_up   = ["f-3+", "f-2+", "f-1+", "f0+",  "f1+",  "f2+",  "f3+"]
+        all_up = s_up + p_up + d_up + f_up
+        s_down = ["s-"]
+        p_down = ["py-",  "pz-",  "px-"]
+        d_down = ["dxy-", "dyz-", "dz2-", "dxz-", "dxz-"]
+        f_down = ["f-3-", "f-2-", "f-1-", "f0-",  "f1-",  "f2-",  "f3-"]
+        all_down = s_down + p_down + d_down + f_down
+        o = options.orbital
+        orbitals = []
+        if  options.spin == "+-":
+            if   o == 's'  : orbitals = s_up + s_down
+            elif o == 'p'  : orbitals = p_up + p_down
+            elif o == 'd'  : orbitals = d_up + d_down
+            elif o == 'f'  : orbitals = f_up + f_down
+            elif o == 'all': orbitals = all_up + all_down
+            else           : orbitals = [o]
+        elif options.spin == "+":
+            if   o == 's'  : orbitals = s_up
+            elif o == 'p'  : orbitals = p_up
+            elif o == 'd'  : orbitals = d_up
+            elif o == 'f'  : orbitals = f_up
+            elif o == 'all': orbitals = all_up
+            else           : orbitals = [o]
+        elif options.spin == "-":
+            if   o == 's'  : orbitals = s_down
+            elif o == 'p'  : orbitals = p_down
+            elif o == 'd'  : orbitals = d_down
+            elif o == 'f'  : orbitals = f_down
+            elif o == 'all': orbitals = all_down
+            else           : orbitals = [o]
+#        print range(a[0], a[1]+1)
+        for orbit in orbitals:
+            for i in range(a[0]-1, a[1]):
+                dos = dos + doscar.site_dos(i,orbit)
 
     for i in range(len(energy)):
         l_en  = energy[i]-options.ferm
@@ -173,7 +202,7 @@ else:
             l_dos = l_dos/float(a[1]-a[0]+1)
 
 #        print l_en,l_dos
-        print l_en,dos[i]
+        print l_en, sign*dos[i]
 
 
 
