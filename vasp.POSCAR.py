@@ -86,7 +86,8 @@ else:
 
 #        c = tip.get_cell()
 #        tip.set_cell(c*(2,2,0))
-        tip.rotate(v='z',a=(alpha/180.)*pi, center=l_center,rotate_cell=True)
+        tip.rotate(v='y',a=(alpha/180.)*pi, center=l_center,rotate_cell=True)
+        #tip.rotate(v='z',a=(alpha/180.)*pi, center=l_center,rotate_cell=True)
         tip.set_cell(poscar.get_cell())
 
         poscar = sur1+tip+sur2

@@ -158,7 +158,8 @@ else:
         elif options.spin == "-"  : dos = dos_ud[1]
     elif options.get == "integrated_dos" :
         dos_ud = doscar._get_integrated_dos()
-        if   options.spin == "+-" : dos = dos_ud[0]+dos_ud[1]
+        if   options.spin == "+-" : dos = (dos_ud[0]+dos_ud[1])*0.5
+        #if   options.spin == "+-" : dos = (dos_ud[0]+dos_ud[1])
         elif options.spin == "+"  : dos = dos_ud[0]
         elif options.spin == "-"  : dos = dos_ud[1]
         sign = 1.0
