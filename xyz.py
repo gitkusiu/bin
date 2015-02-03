@@ -28,56 +28,64 @@ else:
 
     f     = open(sys.argv[num-1], "r")
     lines = f.read().splitlines()
-    no_lines    = len(lines)                  # number of lines in a file
-    no_atoms    = int(lines[0].split()[0])    # number of atoms of a system
-    no_steps    = int(no_lines/no_atoms)      # number of simulation steps
+    no_lines         = len(lines)                  # number of lines in a file
+    no_atoms         = int(lines[0].split()[0])    # number of atoms of a system
     no_lines_in_step = no_atoms + 2
-    print no_steps, no_lines, no_atoms
+    no_steps         = int(no_lines/no_lines_in_step)      # number of simulation steps
+    
+
+    print "no_lines         : ",no_lines
+    print "no_atoms         : ",no_atoms
+    print "no_steps         : ",no_steps
+    print "no_lines_in_step : ",no_lines_in_step
 
     # --------------- Atoms -----------------
     a = options.atoms # do not use/modify options.atoms
     is_there_any_atom_specified = (a[1]-a[0] >= 0)
     if(a == [-1,-1]):
-        a = [no_atoms, no_atoms]       
+        a = [no_atoms, no_atoms] 
+#    print "--------------- Atoms -----------------"      
+#    print "a = ", a
 
     # --------------- Steps -----------------
     s = options.steps # 
     if(s == [-1,-1]):
         s = [no_steps,no_steps]
+#    print "--------------- Steps -----------------"      
+#    print "s = ", s
 
     # --------------- Translation -----------------
-    # translation
     t = options.Translation
+    t_from = a[0]+1
+    t_to   = a[1]+2
     is_translation_nonzero          = (t != (0.0,0.0,0.0))
     do_we_translate = is_translation_nonzero and is_there_any_atom_specified
 
+#    print "--------------- Translation -----------------"      
+    print "t = ", t
+    print "t_from = ", t_from
+    print "t_to   = ", t_to
 
-    print "steps", s, range(s[0],s[1]+1)
+
+
     # ---- LOOP OVER STEPS -----
     for i in range(s[0],s[1]+1):
+        print s, range(s[0],s[1]+1)
         # copy whole step from the lines table
         i_from = (i-1)*no_lines_in_step + 1
         i_to   = (i-1)*no_lines_in_step + no_lines_in_step
-        print i, i_from, i_to
+#        print i, i_from, i_to
         step   = lines[i_from-1:i_to]
-        print "------------------------------", len(step)
+        print "------------------------------", len(step), len(lines),  i_from-1, i_to
 
         # translate what you have to
         if(do_we_translate):
-            a_from = a[0]+1
-            a_to   = a[1]+2
-            print "trans", a_from,a_to
-#            for atom in step[a_from:a_to]:
-#                elem = atom.split()[0]
-#                r = atom.split()[1:4]
-#                atom = str(elem) +  "     " + str(float(r[0])+t[0]) + "     " + str(float(r[1])+t[1]) + "     " + str(float(r[2])+t[2])
-#                print atom
-            for j in range(a_from,a_to):
+            print range(t_from,t_to)
+            for j in range(t_from,t_to):
                 at   = step[j].split()
                 elem = at[0]
                 r    = at[1:4]
                 step[j] = str(elem) +  "     " + str(float(r[0])+t[0]) + "     " + str(float(r[1])+t[1]) + "     " + str(float(r[2])+t[2])
-
 
         # printing
         for atom in step:
