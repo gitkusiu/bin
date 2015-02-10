@@ -11,8 +11,8 @@ parser.add_option("-s", "--steps",            action="store", type="int",    def
 parser.add_option("-p", "--periods",          action="store", type="int",    default=[1,1,1],       help="repetition of the unit cell", nargs=3)
 parser.add_option("-T", "--Translation",      action="store", type="float",  default=[0.0,0.0,0.0], help="ss", nargs=3)
 parser.add_option("-r", "--rotation_angle",   action="store", type="float",  default=0.0,           help="rotation angle", nargs=1)
-parser.add_option(      "--rotate_around",    action="store", type="int",    default=0, help="rotate around nth atom", nargs=1)
-parser.add_option("-c", "--cell",          action="store", type="string", default="answer.lvs",  help="format of the output file: xyz")
+parser.add_option(      "--rotate_around",    action="store", type="int",    default=0,             help="rotate around nth atom", nargs=1)
+parser.add_option("-c", "--cell",             action="store", type="string", default="answer.lvs",  help="format of the output file: xyz")
 
 (options, args) = parser.parse_args()
 
@@ -34,16 +34,16 @@ else:
     no_steps         = int(no_lines/no_lines_in_step)      # number of simulation steps
     
 
-    print "no_lines         : ",no_lines
-    print "no_atoms         : ",no_atoms
-    print "no_steps         : ",no_steps
-    print "no_lines_in_step : ",no_lines_in_step
+#    print "no_lines         : ",no_lines
+#    print "no_atoms         : ",no_atoms
+#    print "no_steps         : ",no_steps
+#    print "no_lines_in_step : ",no_lines_in_step
 
     # --------------- Atoms -----------------
     a = options.atoms # do not use/modify options.atoms
     is_there_any_atom_specified = (a[1]-a[0] >= 0)
     if(a == [-1,-1]):
-        a = [no_atoms, no_atoms] 
+        a = [1, no_atoms] 
 #    print "--------------- Atoms -----------------"      
 #    print "a = ", a
 
@@ -58,29 +58,33 @@ else:
     t = options.Translation
     t_from = a[0]+1
     t_to   = a[1]+2
-    is_translation_nonzero          = (t != (0.0,0.0,0.0))
+    is_translation_nonzero          = (t != [0.0,0.0,0.0])
     do_we_translate = is_translation_nonzero and is_there_any_atom_specified
-
+    print "do_we_translate" , do_we_translate
 #    print "--------------- Translation -----------------"      
-    print "t = ", t
-    print "t_from = ", t_from
-    print "t_to   = ", t_to
+#    print "t = ", t
+#    print "t_from = ", t_from
+#    print "t_to   = ", t_to
 
+    # --------------- Periodic repetitions -----------------
+    p = options.periods
+    do_we_repeat = (p != [1,1,1])
+    print "do_we_repeat" , do_we_repeat
 
 
     # ---- LOOP OVER STEPS -----
     for i in range(s[0],s[1]+1):
-        print s, range(s[0],s[1]+1)
+#        print s, range(s[0],s[1]+1)
         # copy whole step from the lines table
         i_from = (i-1)*no_lines_in_step + 1
         i_to   = (i-1)*no_lines_in_step + no_lines_in_step
 #        print i, i_from, i_to
         step   = lines[i_from-1:i_to]
-        print "------------------------------", len(step), len(lines),  i_from-1, i_to
+#        print "------------------------------", len(step), len(lines),  i_from-1, i_to
 
         # translate what you have to
         if(do_we_translate):
-            print range(t_from,t_to)
+#            print range(t_from,t_to)
             for j in range(t_from,t_to):
                 at   = step[j].split()
                 elem = at[0]
@@ -89,7 +93,13 @@ else:
 
         # printing
         for atom in step:
-            print atom
+            if(do_we_repeat):
+                print atom
+                for ix in range(1,p[0]):
+                    for iy in range(1,p[1]):
+                        for iz in range(1,p[2]):
+            else:
+                print atom
 
 
                   
