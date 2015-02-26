@@ -4,6 +4,7 @@ import sys
 from optparse import OptionParser
 
 
+
 parser = OptionParser()
 #parser.add_option("-f", "--format",           action="store", type="string", default="xyz",      help="format of the output file: xyz")
 parser.add_option("-a", "--atoms",            action="store", type="int",    default=[-1,-1],       help="specify atoms to whcih changes (translation rotation etc. will be made)", nargs=2)
