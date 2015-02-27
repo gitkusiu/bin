@@ -13,29 +13,35 @@ from optparse import OptionParser
 
 
 parser = OptionParser()
-parser.add_option("-g", "--get",     action="store", type="string", default="positions",      help="what kind of data shoud be extracted")
+parser.add_option("-g", "--get",        action="store", type="string", default="positions",     help="What script shoudl look for: 1.positions, 2.forces, ")
 parser.add_option("-f", "--format",     action="store", type="string", default="xyz",           help="format of positions file: xyz ")
 parser.add_option("-a", "--atoms",      action="store", type="int",    default=[-1,-1],         help="specify range of atoms", nargs=2)
 parser.add_option("-s", "--steps",      action="store", type="int",    default=[-1,-1],         help="specify range of steps", nargs=2)
 parser.add_option("-p", "--periods",    action="store", type="int",    default=[1,1,1],       help="repetition of the unit cell", nargs=3)
 (options, args) = parser.parse_args()
 
+# count number of command line arguments
 num = len(sys.argv)
-
-
 if(num < 2):
     parser.print_help()
 else:
+    ############################ options which are not supported by ASE liblary
+
+    # if requested accurancy was reached
     if(options.get == "conv"):
-        ediffg = 0.0
+        ediffg              = 0.0
+        accuracy_is_reached = False
+
         for line in open(sys.argv[num-1]):
             if "EDIFFG" in line:
                 ediffg = float(line.split()[2])
                 print "EDIFFG = ", ediffg, ":\t",
             if "reached required accuracy" in line: 
-                print ("accuracy is reached     :\t")
-                sys.exit()
-        print "accuracy is NOT reached :\tFmax =",
+                print "accuracy is reached     : Fmax ="
+                accuracy_is_reached = True
+                break
+        if not(accuracy_is_reached):
+            print "accuracy is NOT reached :\tFmax =",
         options.get   = "max_force"
         options.steps = [-1,1]
 
@@ -116,22 +122,23 @@ else:
 
 
             if(options.get == "max_force"):
-                # step.constraints can be readed only is POSCAR/CONTCAR exist
-                if(os.path.isfile("POSCAR") or os.path.isfile("CONTCAR")):
-                    # TODO: POSCAR/CONTCAR is necesarry only for 'selective dinamic' mode.
-                    #       Do not expext POSCAR/CONTCAR if 'selective dinamic' is not specified
-                    forces    = np.array(step.get_forces())
-                    fix_atoms = step.constraints[0].index
-                    max_force = 0.0
+                max_force = 0.0
+                forces    = np.array(step.get_forces())
+                consts    = step.constraints
+                if(len(consts) > 0):
+                    fix_atoms = consts[0].index
                     for j in range(a[0],a[1]+1):
                         if((j-1 in fix_atoms) != True):
                             f = forces[j-1]
                             norm = sqrt(f[0]**2 + f[1]**2 + f[2]**2)
                             if ( norm > max_force):
                                 max_force = norm
-                    print max_force
                 else:
-                    print "ERROR: You want to find a maximal force acting on system atom, but there is no POSCAR or CONTCAR to get constraints"
-                    exit()
+                    for j in range(a[0],a[1]+1):
+                        f = forces[j-1]
+                        norm = sqrt(f[0]**2 + f[1]**2 + f[2]**2)
+                        if ( norm > max_force):
+                            max_force = norm
+                print max_force
     else:
         print "Error: OUTCAR does not contain sufficient amount of information. Number of ionic steps = 0."
