@@ -116,15 +116,21 @@ else:
 
 
             if(options.get == "max_force"):
-                forces    = np.array(step.get_forces())
-                fix_atoms = step.constraints[0].index
-                max_force = 0.0
-                for j in range(a[0],a[1]+1):
-                    if((j-1 in fix_atoms) != True):
-                        f = forces[j-1]
-                        norm = sqrt(f[0]**2 + f[1]**2 + f[2]**2)
-                        if ( norm > max_force):
-                            max_force = norm
-                print max_force
+                # TODO: POSCAR/CONTCAR is necesarry only for 'selective dinamic' mode.
+                #       Do not expext POSCAR/CONTCAR if 'selective dinamic' is not specified
+                if(os.path.isfile("POSCAR") or os.path.isfile("CONTCAR")):
+                    forces    = np.array(step.get_forces())
+                    fix_atoms = step.constraints[0].index
+                    max_force = 0.0
+                    for j in range(a[0],a[1]+1):
+                        if((j-1 in fix_atoms) != True):
+                            f = forces[j-1]
+                            norm = sqrt(f[0]**2 + f[1]**2 + f[2]**2)
+                            if ( norm > max_force):
+                                max_force = norm
+                    print max_force
+                else:
+                    print "ERROR: You want to find a maximal force acting on system atom, but there is no POSCAR or CONTCAR to get constraints"
+                    exit()
     else:
         print "Error: OUTCAR does not contain sufficient amount of information. Number of ionic steps = 0."
