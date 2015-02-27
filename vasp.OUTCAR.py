@@ -116,9 +116,10 @@ else:
 
 
             if(options.get == "max_force"):
-                # TODO: POSCAR/CONTCAR is necesarry only for 'selective dinamic' mode.
-                #       Do not expext POSCAR/CONTCAR if 'selective dinamic' is not specified
+                # step.constraints can be readed only is POSCAR/CONTCAR exist
                 if(os.path.isfile("POSCAR") or os.path.isfile("CONTCAR")):
+                    # TODO: POSCAR/CONTCAR is necesarry only for 'selective dinamic' mode.
+                    #       Do not expext POSCAR/CONTCAR if 'selective dinamic' is not specified
                     forces    = np.array(step.get_forces())
                     fix_atoms = step.constraints[0].index
                     max_force = 0.0
