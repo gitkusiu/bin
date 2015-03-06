@@ -2,6 +2,7 @@
 
 import sys
 
+import numpy as np 
 from ase.io.vasp import read_vasp
 from ase.io.vasp import write_vasp
 from ase.io.xyz import write_xyz
@@ -24,6 +25,9 @@ parser.add_option("-r", "--rotation_angle",   action="store", type="float",  def
 parser.add_option(      "--rotate_around",    action="store", type="int",    default=0, help="rotate around nth atom", nargs=1)
 #parser.add_option(      "--rotation_vector",  action="store", type="float",  default=[0.0,0.0,0.0], help="rotation point", nargs=1)
 parser.add_option("-u", "--cell_scale",       action="store", type="float",  default=[1.0,1.0,1.0],           help="unit cell scalling factor", nargs=3)
+parser.add_option(      "--cell1_extend",      action="store", type="float",  default=[0.0,0.0,0.0],           help="unit cell scalling factor", nargs=3)
+parser.add_option(      "--cell2_extend",      action="store", type="float",  default=[0.0,0.0,0.0],           help="unit cell scalling factor", nargs=3)
+parser.add_option(      "--cell3_extend",      action="store", type="float",  default=[0.0,0.0,0.0],           help="unit cell scalling factor", nargs=3)
 parser.add_option("-c", "--comment",          action="store", type="string", default=" ")
 (options, args) = parser.parse_args()
 
@@ -97,8 +101,28 @@ else:
     # --------------- unit cell scaling facto -----------------
     u = options.cell_scale
     if( u != [1.0, 1.0, 1.0] ):
-        cell = poscar.get_cell()
-        poscar.set_cell(cell*u)
+        c = poscar.get_cell()
+        a = np.array(u)
+        poscar.set_cell(c*a)
+
+    # --------------- unit cell1 extending -----------------
+    u = options.cell1_extend
+    if( u != [0.0, 0.0, 0.0] ):
+        c = poscar.get_cell()
+        c[0] += np.array(u)
+        poscar.set_cell(c)
+    # --------------- unit cell2 extending -----------------
+    u = options.cell2_extend
+    if( u != [0.0, 0.0, 0.0] ):
+        c = poscar.get_cell()
+        c[1] += np.array(u)
+        poscar.set_cell(c)
+    # --------------- unit cell3 extending -----------------
+    u = options.cell3_extend
+    if( u != [0.0, 0.0, 0.0] ):
+        c = poscar.get_cell()
+        c[2] += np.array(u)
+        poscar.set_cell(c)
 
     # --------------- Periodic repetitions -----------------
     p = options.periods
