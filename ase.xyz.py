@@ -52,17 +52,12 @@ else:
         print "ERROR: Atoms range is negative "
         print a
         exit()
-    if(print_debug):
-        print "--------------- Atoms -----------------"      
-        print "a = ", a
 
 
     # --------------- Translation -----------------
     t = options.Translation
     is_translation_nonzero          = (t != [0.0,0.0,0.0])
     do_we_translate = is_translation_nonzero and (not atoms_range_negative)
-    if(print_debug):
-        print "We translate", do_we_translate, is_translation_nonzero , atoms_range_negative
 
     # --------------- Rotation -----------------
     alpha  = options.rotation_angle
@@ -125,6 +120,7 @@ else:
 
             # --- Repetytion  ----
             if(do_we_repeat):
+                # read cell
                 cell = [[],[],[]]
                 f  = open(options.cell, "r")
                 ls = f.read().splitlines()
@@ -132,10 +128,9 @@ else:
                     l = ls[i].split()
                     cell[i] = [float(l[0]), float(l[1]), float(l[2])]
                 step.set_cell(cell)
-                step_new = step*p
-            else:
-                step_new = step
+                # multiply by periods
+                step = step*p
 
 
             # ----- Write -----
-            write_xyz(sys.stdout,step_new,comment=comm)
+            write_xyz(sys.stdout,step,comment=comm)
