@@ -8,6 +8,8 @@ from ase.io.vasp import write_vasp
 from ase.io.xyz import write_xyz
 from ase import Atoms
 
+import asekk
+
 from math import pi
 
 from ase.constraints import FixAtoms
@@ -66,36 +68,15 @@ else:
 #    v      = options.rotation_vector
 
     if(alpha != 0.0):
-        l_positions = poscar.get_positions()
-        l_numbers   = poscar.get_atomic_numbers()
-        l_cell      = poscar.get_cell()
-        l_from      = a[0]-1
-        l_to        = a[1]-1
-
-        constr = poscar._get_constraints()
-
-        l_sur1_pos            = l_positions[0      : l_from]
-        l_tip_pos             = l_positions[l_from : l_to+1]
-        l_sur2_pos            = l_positions[l_to+1 : natoms]
-
-        l_sur1_atomic_numbers = l_numbers[0      : l_from]
-        l_tip_atomic_numbers  = l_numbers[l_from : l_to+1]
-        l_sur2_atomic_numbers = l_numbers[l_to+1 : natoms]
-
-        l_center  = l_positions[options.rotate_around-1]
-
-        sur2 = Atoms(positions=l_sur2_pos, numbers=l_sur2_atomic_numbers, cell=l_cell, pbc = True)
-        sur1 = Atoms(positions=l_sur1_pos, numbers=l_sur1_atomic_numbers, cell=l_cell, pbc = True)
-        tip  = Atoms(positions=l_tip_pos,  numbers=l_tip_atomic_numbers, cell=l_cell, pbc = True)
-
-#        c = tip.get_cell()
-#        tip.set_cell(c*(2,2,0))
-#        tip.rotate(v='y',a=(alpha/180.)*pi, center=l_center,rotate_cell=True)
-        tip.rotate(v='z',a=(alpha/180.)*pi, center=l_center,rotate_cell=True)
-        tip.set_cell(poscar.get_cell())
-
-        poscar = sur1+tip+sur2
-        poscar.set_constraint(constr)
+        origin    = [0.0,0.0,0.0]
+        ra        = options.rotate_around
+        positions = poscar.arrays['positions']
+        if(ra > 0 and ra <= natoms):
+            origin  = positions[ra-1]
+        origin = positions[options.rotate_around-1]
+        
+        # rotate selected atoms
+        asekk.rotate_atoms(poscar, alpha, fromto=a, axis='z', origin=origin)
 
 
     # --------------- unit cell scaling facto -----------------

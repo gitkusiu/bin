@@ -20,7 +20,7 @@ parser.add_option("-p", "--periods",          action="store", type="int",    def
 parser.add_option("-T", "--Translation",      action="store", type="float",  default=[0.0,0.0,0.0], help="ss", nargs=3)
 parser.add_option("-r", "--rotation_angle",   action="store", type="float",  default=0.0,           help="rotation angle", nargs=1)
 parser.add_option(      "--rotate_around",    action="store", type="int",    default=0,             help="rotate around nth atom", nargs=1)
-parser.add_option(      "--rotation_axis",    action="store", type="string", default="z",           help="rotation axis", nargs=1)
+parser.add_option(      "--axis",    action="store", type="string", default="z",           help="rotation axis", nargs=1)
 parser.add_option("-c", "--cell",             action="store", type="string", default="answer.lvs",  help="format of the output file: xyz")
 
 (options, args) = parser.parse_args()
@@ -111,12 +111,12 @@ else:
             if(alpha != 0.0):
                 # set origin of rotation
                 origin    = [0.0,0.0,0.0]
-                ra = options.rotate_around
+                ra   = options.rotate_around
                 if(ra > 0 and ra <= natoms):
                     positions = step.arrays['positions']
                     origin    = positions[ra-1]
                 # rotate selected atoms
-                asekk.rotate_atoms(step, alpha, fromto=[a_from,a_to], axis='z', origin=[0.0,0.0,0.0])
+                asekk.rotate_atoms(step, alpha, fromto=[a_from,a_to], axis=options.axis, origin=origin)
 
             # --- Repetytion  ----
             if(do_we_repeat):
