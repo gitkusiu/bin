@@ -1,6 +1,6 @@
 #!/usr/bin/python
 
-import ase.kk
+import asekk
 import sys
 import numpy as np
 from math import cos, sin, pi
@@ -22,7 +22,7 @@ kat=-45.0
 #for i in range(n):
 #    p[i] = asekk.rotate(p[i],kat,'y',origin=p[0])
 
-ase.kk.rotate_atoms(poscar, kat, fromto=[2,2], axis='z', origin=p[0])
+asekk.rotate_atoms(poscar, kat, fromto=[1,4], axis='z', origin=[0.0,0.0,0.0])
 
 write_vasp(sys.stdout,poscar,label="moj test", direct=False,sort=False,vasp5=True)
 

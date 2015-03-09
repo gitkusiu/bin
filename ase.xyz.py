@@ -5,6 +5,8 @@ from ase.io.xyz import read_xyz
 from ase.io.xyz import write_xyz
 from ase        import Atoms
 
+import asekk
+
 from math import pi
 
 from optparse import OptionParser
@@ -22,8 +24,6 @@ parser.add_option(      "--rotation_axis",    action="store", type="string", def
 parser.add_option("-c", "--cell",             action="store", type="string", default="answer.lvs",  help="format of the output file: xyz")
 
 (options, args) = parser.parse_args()
-
-#print parser.parse_args()
 
 num = len(sys.argv)
 
@@ -68,8 +68,6 @@ else:
     alpha  = options.rotation_angle
     
 
-
-
     # --------------- Periodic repetitions -----------------
     p = options.periods
     if( p[0] <= 0 and p[1] <= 0 and p[2] <= 0 ):
@@ -98,8 +96,11 @@ else:
         print "s = ", s
 
 
-
+    ##############################
+    #  loop over steps
+    ##############################
     if(is_there_any_step):
+        # step selection
         for i in range(s[0],s[1]+1):
             step = file_xyz[i-1]
 #            print step
@@ -113,44 +114,24 @@ else:
 
              # --- Rotate ----
             if(alpha != 0.0):
-                l_p   = step.get_positions()
-                l_n   = step.get_atomic_numbers()
-                l_cell   = step.get_cell()
-
-                poss  = [ l_p[0 : a_from-1],    l_p[a_from-1 : a_to],   l_p[a_to : natoms] ]
-                nums  = [ l_n[0 : a_from-1],    l_n[a_from-1 : a_to],   l_n[a_to : natoms] ]
-
-                l_center  = [0.0,0.0,0.0]
-                n_center = options.rotate_around
-                if(n_center > 0 and n_center <= natoms):
-                    l_center  = l_p[n_center-1]
-
-                part1 = Atoms(positions=poss[0], numbers=nums[0], cell=l_cell, pbc = True)
-                part2 = Atoms(positions=poss[1], numbers=nums[1], cell=l_cell, pbc = True)
-                part3 = Atoms(positions=poss[2], numbers=nums[2], cell=l_cell, pbc = True)
-
-                part2.rotate(v=options.rotation_axis,a=(alpha/180.)*pi, center=l_center,rotate_cell=True)
-                part2.set_cell(l_cell)
-
-                step = part1+part2+part3
+                # set origin of rotation
+                origin    = [0.0,0.0,0.0]
+                ra = options.rotate_around
+                if(ra > 0 and ra <= natoms):
+                    positions = step.arrays['positions']
+                    origin    = positions[ra-1]
+                # rotate selected atoms
+                asekk.rotate_atoms(step, alpha, fromto=[a_from,a_to], axis='z', origin=[0.0,0.0,0.0])
 
             # --- Repetytion  ----
             if(do_we_repeat):
-                lcell = [[],[],[]]
+                cell = [[],[],[]]
                 f  = open(options.cell, "r")
                 ls = f.read().splitlines()
                 for i in range(3):
                     l = ls[i].split()
-                    lcell[i] = [float(l[0]), float(l[1]), float(l[2])]
-#                print lcell
-#                print f
-#                print ls
-#                lcell = []
-#                lcell[0] = [ float(ls[0].split()[0]),    float(ls[0].split()[1]), float(ls[0].split()[2]) ]
-#                lcell[1] = [ float(ls[1].split()[0]),    float(ls[1].split()[1]), float(ls[1].split()[2]) ]
-#                lcell[2] = [ float(ls[2].split()[0]),    float(ls[2].split()[1]), float(ls[2].split()[2]) ]
-
-                step.set_cell(lcell)
+                    cell[i] = [float(l[0]), float(l[1]), float(l[2])]
+                step.set_cell(cell)
                 step_new = step*p
             else:
                 step_new = step
@@ -158,5 +139,3 @@ else:
 
             # ----- Write -----
             write_xyz(sys.stdout,step_new,comment=comm)
-
-
