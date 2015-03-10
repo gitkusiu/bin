@@ -79,16 +79,15 @@ else:
     is_there_any_step = (n_steps > 0)
     s = options.steps
     if(s == None):       # deafult case: all steps
-        s = (1, n_steps)
-    elif(s == [-1,-1]):  # last step
-        s = (n_steps,n_steps)
+        s = [1, n_steps]
+    elif(s == (-1,-1)):  # last step
+        s = [n_steps,n_steps]
     elif( s[0] > n_steps or s[1] > n_steps ):
         print "ERROR: Step range is larger than number of steps in OUTCAR"
         exit()
     elif( s[0] > s[1] ):
         print "ERROR: Max step is smaler that Min step"
         exit()
-
     ##############################
     #  loop over steps
     ##############################
