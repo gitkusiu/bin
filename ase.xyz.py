@@ -1,9 +1,11 @@
 #!/usr/bin/python
 
 import sys
-from ase.io.xyz import read_xyz
-from ase.io.xyz import write_xyz
-from ase        import Atoms
+from ase.io.xyz  import read_xyz
+from ase.io.xyz  import write_xyz
+from ase.io.aims import write_aims
+from ase.io.aims import read_aims
+from ase         import Atoms
 
 import asekk
 
@@ -22,6 +24,7 @@ parser.add_option("-r", "--rotation_angle",   action="store", type="float",  def
 parser.add_option(      "--rotate_around",    action="store", type="int",    default=0,             help="rotate around nth atom", nargs=1)
 parser.add_option(      "--axis",    action="store", type="string", default="z",           help="rotation axis", nargs=1)
 parser.add_option("-c", "--cell",             action="store", type="string", default="answer.lvs",  help="format of the output file: xyz")
+parser.add_option("-f", "--format",           action="store", type="string", default="xyz",         help="format of the output file: POSCAR, (xyz in preparation)")
 
 (options, args) = parser.parse_args()
 
@@ -133,4 +136,7 @@ else:
 
 
             # ----- Write -----
-            write_xyz(sys.stdout,step,comment=comm)
+            if(options.format == 'xyz'):
+                write_xyz(sys.stdout,step,comment=comm)
+            elif(options.format == 'aims'):
+                write_aims("geometry.in",step)
