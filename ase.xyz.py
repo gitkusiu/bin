@@ -17,7 +17,7 @@ from optparse import OptionParser
 parser = OptionParser()
 #parser.add_option("-f", "--format",           action="store", type="string", default="xyz",      help="format of the output file: xyz")
 parser.add_option("-a", "--atoms",            action="store", type="int",    default=[-1,-1],       help="specify atoms to whcih changes (translation rotation etc. will be made)", nargs=2)
-parser.add_option("-s", "--steps",            action="store", type="int",    default=[-1,-1],       help="specify steps ", nargs=2)
+parser.add_option("-s", "--steps",            action="store", type="int",    default=None,       help="specify steps ", nargs=2)
 parser.add_option("-p", "--periods",          action="store", type="int",    default=[1,1,1],       help="repetition of the unit cell", nargs=3)
 parser.add_option("-T", "--Translation",      action="store", type="float",  default=[0.0,0.0,0.0], help="ss", nargs=3)
 parser.add_option("-r", "--rotation_angle",   action="store", type="float",  default=0.0,           help="rotation angle", nargs=1)
@@ -78,21 +78,16 @@ else:
     n_steps = len(file_xyz)
     is_there_any_step = (n_steps > 0)
     s = options.steps
-    if(s[0] == -1): # deafult case: all steps
-        if( s[1] == -1):
-           s = (1, n_steps)
-        else:
-           s = (n_steps,n_steps)
+    if(s == None):       # deafult case: all steps
+        s = (1, n_steps)
+    elif(s == [-1,-1]):  # last step
+        s = (n_steps,n_steps)
     elif( s[0] > n_steps or s[1] > n_steps ):
         print "ERROR: Step range is larger than number of steps in OUTCAR"
         exit()
     elif( s[0] > s[1] ):
         print "ERROR: Max step is smaler that Min step"
         exit()
-    if(print_debug):
-        print "--------------- Steps -----------------"      
-        print "s = ", s
-
 
     ##############################
     #  loop over steps
