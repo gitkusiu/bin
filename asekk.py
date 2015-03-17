@@ -54,5 +54,12 @@ def rotate_atoms(atoms, alpha, fromto=[-1,-1], axis='z', origin=[0.0,0.0,0.0]):
 
 
 
-
+#####################################
+#
+# print Atoms in bas format
+#
+#######################################
+def write_bas(atoms):
+    p=atoms.arrays['positions']
+    print("position")
 
