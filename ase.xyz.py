@@ -15,6 +15,9 @@ from math import pi
 
 from optparse import OptionParser
 
+num            = len(sys.argv)
+input_file     = sys.argv[num-1]
+def_cell_file  = os.path.splitext(input_file)[0]+".lvs"
 
 parser = OptionParser()
 #parser.add_option("-f", "--format",           action="store", type="string", default="xyz",      help="format of the output file: xyz")
@@ -24,13 +27,13 @@ parser.add_option("-p", "--periods",          action="store", type="int",    def
 parser.add_option("-T", "--Translation",      action="store", type="float",  default=[0.0,0.0,0.0], help="ss", nargs=3)
 parser.add_option("-r", "--rotation_angle",   action="store", type="float",  default=0.0,           help="rotation angle", nargs=1)
 parser.add_option(      "--rotate_around",    action="store", type="int",    default=0,             help="rotate around nth atom", nargs=1)
-parser.add_option(      "--axis",    action="store", type="string", default="z",           help="rotation axis", nargs=1)
-parser.add_option("-c", "--cell",             action="store", type="string", default="answer.lvs",  help="format of the output file: xyz")
+parser.add_option(      "--axis",             action="store", type="string", default="z",           help="rotation axis", nargs=1)
+parser.add_option("-c", "--cell",             action="store", type="string", default=def_cell_file, help="format of the output file: xyz")
 parser.add_option("-f", "--format",           action="store", type="string", default="xyz",         help="format of the output file: POSCAR, (xyz in preparation)")
 
 (options, args) = parser.parse_args()
 
-num = len(sys.argv)
+
 
 print_debug = False
 
@@ -38,7 +41,7 @@ if(num < 2):
     parser.print_help()
 else:
 
-    file_xyz = read_xyz(sys.argv[num-1], slice(0,None,1))
+    file_xyz = read_xyz(input_file, slice(0,None,1))
     natoms = file_xyz[0].get_number_of_atoms()
 
     # if possible read unit-cell
@@ -51,6 +54,7 @@ else:
             cell[i] = [float(l[0]), float(l[1]), float(l[2])]
         for step in file_xyz:
             step.set_cell(cell)
+            step.set_pbc([True,True,True])
 
     # --------------- Atoms -----------------
     a = options.atoms
