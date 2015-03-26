@@ -48,7 +48,7 @@ proc renderi {ii} {
 	global fmask
 	global iorbit
 	animate goto [expr $ii-$iorbit]
-	render TachyonInternal ${fmask}[expr $ii].tga
+	render TachyonInternal ${fmask}[format "%04d.tga" $ii]
 }
 
 
@@ -87,7 +87,7 @@ display update
 display update ui
 
 # setup camera
-#rotate x by -10 
+#rotate z by 90
 #rotate y by 180
 scale by 1
 translate by 0.0 0.0 0
