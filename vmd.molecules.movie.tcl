@@ -1,10 +1,17 @@
 
 # setup variables
-set iorbit 85 
-set forbit 92
+set iorbit 138 
+set forbit 143
 set n [expr $forbit-$iorbit+1]
 set clrID 1
 set fmask "orbital_"
+set type "cube"
+
+set xrot 0
+set yrot 0
+set zrot 90
+set translate 0.0 0.0 0.0
+set scale 1
 
 #create representations  (  CPK + Isosurface )
 proc addReps {myMol SphereScale BondRadius Isoval1 Isoval2 } { 
@@ -66,9 +73,9 @@ color Axes Labels black
 color Labels Bonds white
 
 # load datafiles from disk
-set molL [mol new $fmask[format "%04d.xsf" $iorbit] type xsf waitfor all]
+set molL [mol new $fmask[format "%04d." $iorbit]$type type $type waitfor all]
 for {set ii [expr $iorbit+1]} {$ii<=$forbit} {incr ii} {
-mol addfile $fmask[format "%04d.xsf" $ii] type xsf waitfor all
+mol addfile $fmask[format "%04d." $ii]$type type $type waitfor all
 }
 
 
@@ -87,10 +94,11 @@ display update
 display update ui
 
 # setup camera
-#rotate z by 90
-#rotate y by 180
-scale by 1
-translate by 0.0 0.0 0
+rotate x by $xrot
+rotate y by $yrot
+rotate z by $zrot
+scale by $scale
+translate by $translate
 
  render all
 #for {set ii 86} {$ii<=$n} {incr ii} {
