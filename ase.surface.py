@@ -24,8 +24,10 @@ v=options.vaccuum
 
 atoms = fcc111('Au', size=p,a=l, vacuum=v)
 
-c=atoms.get_cell()
-c[1][0] += l*math.sqrt(2)*0.5
-atoms.set_cell(c)
+#c=atoms.get_cell()
+#c[1][0] += l*math.sqrt(2)*0.5
+#atoms.set_cell(c)
+
+atoms.translate([0.0,0.0,-9.9999999999999982])
 
 write_aims("geometry.in", atoms)
