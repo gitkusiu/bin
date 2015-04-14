@@ -30,7 +30,7 @@ parser = OptionParser()
 parser.add_option("-i", "--input",         action="store",       type="string", help="input file format")
 parser.add_option("-o", "--output",        action="store",       type="string", help="output file format")
 parser.add_option("-t", "--trans",         action="store",       type="string", help="Transformation to be done")
-parser.add_option("-r", "--trans_range",   action="store",       type="int",    help="specify the atoms to whcih changes (translation rotation etc. will be made)", default=[-1,-1], nargs=2)
+parser.add_option(      "--atoms",         action="store",       type="int",    help="specify the atoms to whcih changes (translation rotation etc. will be made)", nargs=2)
 parser.add_option(      "--vector",        action="store",       type="float",  help="Vector of translation", default=[0.,0.,0.], nargs=3)
 parser.add_option(      "--rotate_angle",  action="store",       type="float",  help="Angle  of rotation",    default=0.0)
 parser.add_option(      "--rotate_around", action="store",       type="int",    help="Number of atom around which rotation should be performed", default=1)
@@ -47,7 +47,7 @@ if(options.output != None):
 else:
     oformat = options.input
 trans   = options.trans
-trange  = options.trans_range
+trange  = options.atoms
 ostream = sys.stdout
 
 
@@ -84,7 +84,7 @@ else:
     # >>>>>>>>>>>>>>>>>>>>> TRANSFORM GEOMETRY <<<<<<<<<<<<<<<<<<<<
     natoms = atoms.get_number_of_atoms()
     # atoms selection for modyfiactions
-    if(trange[0] == -1): # deafult case: we change all atoms
+    if(trange[0] == None): # deafult case: we change all atoms
         trange = (1, natoms)
 
     if(  trans == "T" or trans == "translation"):
