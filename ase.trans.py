@@ -42,7 +42,7 @@ parser.add_option(      "--xyzcell",       action="store",       type="string", 
 (options, args) = parser.parse_args()
 
 iformat = options.input
-if(options.output != None):
+if(options.output != None): # default output format
     oformat = options.output
 else:
     oformat = options.input
@@ -84,7 +84,7 @@ else:
     # >>>>>>>>>>>>>>>>>>>>> TRANSFORM GEOMETRY <<<<<<<<<<<<<<<<<<<<
     natoms = atoms.get_number_of_atoms()
     # atoms selection for modyfiactions
-    if(trange == None): # deafult case: we change all atoms
+    if(trange == None): # # default range of atoms
         trange = (1, natoms)
 
     if(  trans == "T" or trans == "translation"):
@@ -94,7 +94,6 @@ else:
         if( is_translation_nonzero and is_there_any_atoms_to_translate ):
             for i in range(trange[0]-1, trange[1]):
                 atoms.arrays['positions'][i] += v
-                print v
 
     elif(trans == "R" or trans == "rotation"   ):
         angle     = options.rotate_angle
