@@ -45,7 +45,7 @@ iformat = options.input
 if(options.output != None):
     oformat = options.output
 else:
-    oformat = options.intput
+    oformat = options.input
 trans   = options.trans
 trange  = options.trans_range
 ostream = sys.stdout
