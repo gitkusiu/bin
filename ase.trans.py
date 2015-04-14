@@ -84,7 +84,7 @@ else:
     # >>>>>>>>>>>>>>>>>>>>> TRANSFORM GEOMETRY <<<<<<<<<<<<<<<<<<<<
     natoms = atoms.get_number_of_atoms()
     # atoms selection for modyfiactions
-    if(trange[0] == None): # deafult case: we change all atoms
+    if(trange == None): # deafult case: we change all atoms
         trange = (1, natoms)
 
     if(  trans == "T" or trans == "translation"):
