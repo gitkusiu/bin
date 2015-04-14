@@ -27,19 +27,25 @@ ifile = sys.argv[num-1]
 xyzCellFile = os.path.splitext(ifile)[0]+".lvs"
 
 parser = OptionParser()
-parser.add_option("-i", "--input",         action="store",       type="string", help="input file format")
-parser.add_option("-o", "--output",        action="store",       type="string", help="output file format")
-parser.add_option("-t", "--trans",         action="store",       type="string", help="Transformation to be done")
-parser.add_option(      "--atoms",         action="store",       type="int",    help="specify the atoms to whcih changes (translation rotation etc. will be made)", nargs=2)
-parser.add_option(      "--vector",        action="store",       type="float",  help="Vector of translation", default=[0.,0.,0.], nargs=3)
-parser.add_option(      "--rotate_angle",  action="store",       type="float",  help="Angle  of rotation",    default=0.0)
-parser.add_option(      "--rotate_around", action="store",       type="int",    help="Number of atom around which rotation should be performed", default=1)
-parser.add_option(      "--rotate_axis",   action="store",       type="string", help="Rotation axis",    default='z')
-parser.add_option(      "--comment",       action="store",       type="string", help="his file was created by ase.convert.py script",     default='z')
-parser.add_option(      "--vaspold",       action="store_false",                help="comment line",     default=True)
-parser.add_option(      "--vaspsort",      action="store_true",                 help="comment line",     default=False)
-parser.add_option(      "--xyzcell",       action="store",       type="string", help="file of xyz cell", default=xyzCellFile)
+parser.add_option("-i", "--input",            action="store",       type="string", help="input file format")
+parser.add_option("-o", "--output",           action="store",       type="string", help="output file format")
+parser.add_option("-t", "--trans",            action="store",       type="string", help="Transformation to be done")
+parser.add_option(      "--atoms",            action="store",       type="int",    help="specify the atoms to whcih changes (translation rotation etc. will be made)", nargs=2)
+parser.add_option(      "--translate_vector", action="store",       type="float",  help="Vector of translation", default=[0.,0.,0.], nargs=3)
+parser.add_option(      "--rotate_angle",     action="store",       type="float",  help="Angle  of rotation",    default=0.0)
+parser.add_option(      "--rotate_around",    action="store",       type="int",    help="Number of atom around which rotation should be performed")
+parser.add_option(      "--rotate_axis",      action="store",       type="string", help="Rotation axis")
+parser.add_option(      "--comment",          action="store",       type="string", help="his file was created by ase.convert.py script",     default='z')
+parser.add_option(      "--vaspold",          action="store_false",                help="comment line",     default=True)
+parser.add_option(      "--vaspsort",         action="store_true",                 help="comment line",     default=False)
+parser.add_option(      "--xyzcell",          action="store",       type="string", help="file of xyz cell", default=xyzCellFile)
 (options, args) = parser.parse_args()
+
+#TODO use this four lines to eliminate --trans variable
+do_we_translate = (options.translate_vector != [0.,0.,0.]) 
+do_we_rotate    = (options.rotate_angle     != 0.0) and \
+                  (options.rotate_around    != None) and \
+                  (options.rotate_axis      != None)
 
 iformat = options.input
 if(options.output != None): # default output format
@@ -88,7 +94,7 @@ else:
         trange = (1, natoms)
 
     if(  trans == "T" or trans == "translation"):
-        v                               = options.vector
+        v                               = options.translate_vector
         is_translation_nonzero          = (v != (0.0,0.0,0.0))
         is_there_any_atoms_to_translate = (trange[1]-trange[0] >= 0)
         if( is_translation_nonzero and is_there_any_atoms_to_translate ):
