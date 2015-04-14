@@ -42,7 +42,10 @@ parser.add_option(      "--xyzcell",       action="store",       type="string", 
 (options, args) = parser.parse_args()
 
 iformat = options.input
-oformat = options.output
+if(options.output != None):
+    oformat = options.output
+else:
+    oformat = options.intput
 trans   = options.trans
 trange  = options.trans_range
 ostream = sys.stdout
