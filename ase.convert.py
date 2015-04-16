@@ -67,7 +67,7 @@ else:
 
 
     if(oformat == "geometry.in"):
-        write_aims(geometry.in, atoms)
+        write_aims("geometry.in", atoms)
 #    elif(oformat == "cube"):
 #        write_cube(`,xsf[1],xsf[0])
 #    elif(oformat == "xsf"):

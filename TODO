@@ -1,0 +1,13 @@
+1. Script conglomeration
+    a) ase.convert.py - is supposed to be efficient converter between many file formats. No m manipulations anipulation will be doen there
+                        It could be started with geometry formats (xyz, POSCAR, geometry.in) and extended to volumetric data formats like CHGCAR .xfs or cube
+                          will repalcae aims.poscar.py ase.xsf.py ase.xyz.py
+    b) ase.outout.reader.py - suposed to be a reader of output files of different applications (VASP, FHI AIMS, Fireball, etc): No convertion will be done here. But output data will be extracted in convenient format for farther manipulations
+                        Will replace vasp.OUTCAR.*.sh ase.outcar.py
+    c) ase.trans.py   - ASE based amnipulation script; translations, rotations of geometry and charges etc
+
+
+2. Future work
+    a) ase.analisys.py     - script fo data analisys of geometries, charges, dos, band_structure etc.
+    b) ase.dos.reader.py   - script wchich reads DOS data from different formats VASP, aims, Fireball etc. and plots it in transparent format.
+    c) ase.bands.reader.py - script wchich reads band structure from different formats VASP, AIMS and plots it in transparent format.
