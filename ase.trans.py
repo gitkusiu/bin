@@ -34,7 +34,7 @@ parser.add_option(      "--atoms",            action="store",       type="int", 
 parser.add_option(      "--translate_vector", action="store",       type="float",  help="Vector of translation", default=[0.,0.,0.], nargs=3)
 parser.add_option(      "--rotate_angle",     action="store",       type="float",  help="Angle  of rotation",    default=0.0)
 parser.add_option(      "--rotate_around",    action="store",       type="int",    help="Number of atom around which rotation should be performed")
-parser.add_option(      "--rotate_axis",      action="store",       type="string", help="Rotation axis")
+parser.add_option(      "--rotate_axis",      action="store",       type="string", help="Rotation axis",  default='z')
 parser.add_option(      "--comment",          action="store",       type="string", help="his file was created by ase.convert.py script",     default='z')
 parser.add_option(      "--vaspold",          action="store_false",                help="comment line",     default=True)
 parser.add_option(      "--vaspsort",         action="store_true",                 help="comment line",     default=False)

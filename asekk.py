@@ -12,18 +12,19 @@ def rotate(vector, alpha, axis='z', origin=[0.0,0.0,0.0]):
     o=np.array(origin)
     v=np.array(vector)
     v1=np.add(v,-o)
+    matrix = []
     if(axis=='z'):
-        matrix = [[ cos(a),-sin(a), 0.0   ],
-                  [ sin(a), cos(a), 0.0   ],
-                  [ 0.0   , 0.0   , 1.0   ]]
+        matrix.append([ cos(a),-sin(a), 0.0   ])
+        matrix.append([ sin(a), cos(a), 0.0   ])
+        matrix.append([ 0.0   , 0.0   , 1.0   ])
     elif(axis=='x'):
-        matrix = [[ 1.0   , 0.0   , 0.0   ],
-                  [ 0.0   , cos(a),-sin(a)],
-                  [ 0.0   , sin(a), cos(a)]]
+        matrix.append([ 1.0   , 0.0   , 0.0   ])
+        matrix.append([ 0.0   , cos(a),-sin(a)])
+        matrix.append([ 0.0   , sin(a), cos(a)])
     elif(axis=='y'):
-        matrix = [[ cos(a), 0.0   , sin(a)],
-                  [ 0.0   , 1.0   , 0.0   ],
-                  [-sin(a), 0.0   , cos(a)]]
+        matrix.append([ cos(a), 0.0   , sin(a)])
+        matrix.append([ 0.0   , 1.0   , 0.0   ])
+        matrix.append([-sin(a), 0.0   , cos(a)])
     m = np.array(matrix)
     v2=np.dot(m,v1)
     return np.add(o,v2)
