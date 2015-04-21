@@ -39,6 +39,9 @@ parser.add_option(      "--rotate_axis",      action="store",       type="string
 parser.add_option(      "--cell_1_extend",    action="store",       type="string", help="Vector of Cell_1 extention", default=[0.,0.,0.], nargs=3)
 parser.add_option(      "--cell_2_extend",    action="store",       type="string", help="Vector of Cell_2 extention", default=[0.,0.,0.], nargs=3)
 parser.add_option(      "--cell_3_extend",    action="store",       type="string", help="Vector of Cell_3 extention", default=[0.,0.,0.], nargs=3)
+parser.add_option(      "--cell_1_set",       action="store",       type="string", help="Vector of Cell_1")
+parser.add_option(      "--cell_2_set",       action="store",       type="string", help="Vector of Cell_2")
+parser.add_option(      "--cell_3_set",       action="store",       type="string", help="Vector of Cell_3")
 parser.add_option(      "--comment",          action="store",       type="string", help="his file was created by ase.convert.py script",     default='z')
 parser.add_option(      "--vaspold",          action="store_false",                help="comment line",     default=True)
 parser.add_option(      "--vaspsort",         action="store_true",                 help="comment line",     default=False)
@@ -118,19 +121,20 @@ else:
 
     zero = np.zeros(3)
     c    = atoms.get_cell()
-    if(  trans == "C1" or trans == "cell1extend"):
+    if(  trans == "C1" or trans == "cell_1_extend"):
         u = np.array(options.cell_1_extend).astype(np.float)
         if( not np.array_equal(u,zero) ):
             c[0] = np.add(c[0], u)
-    if(  trans == "C2" or trans == "cell2extend"):
+    if(  trans == "C2" or trans == "cell_2_extend"):
         u = np.array(options.cell_2_extend).astype(np.float)
         if( not np.array_equal(u,zero) ):
             c[1] = np.add(c[1], u)
-    if(  trans == "C3" or trans == "cell3extend"):
+    if(  trans == "C3" or trans == "cell_3_extend"):
         u = np.array(options.cell_3_extend).astype(np.float)
         if( not np.array_equal(u,zero) ):
             c[2] = np.add(c[2], u)
     atoms.set_cell(c)
+
 
 
     # >>>>>>>>>>>>>>>>>>>>> WRITE GEOMETRY <<<<<<<<<<<<<<<<<<<<
