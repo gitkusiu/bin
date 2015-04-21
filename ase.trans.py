@@ -5,6 +5,7 @@
 # ase.convert.py -i inport_format -o output_format
 import sys
 import os.path
+import numpy as np
 
 from ase.io.aims import read_aims
 from ase.io.cube import read_cube
@@ -35,6 +36,9 @@ parser.add_option(      "--translate_vector", action="store",       type="float"
 parser.add_option(      "--rotate_angle",     action="store",       type="float",  help="Angle  of rotation",    default=0.0)
 parser.add_option(      "--rotate_around",    action="store",       type="int",    help="Number of atom around which rotation should be performed")
 parser.add_option(      "--rotate_axis",      action="store",       type="string", help="Rotation axis",  default='z')
+parser.add_option(      "--cell_1_extend",    action="store",       type="string", help="Vector of Cell_1 extention", default=[0.,0.,0.], nargs=3)
+parser.add_option(      "--cell_2_extend",    action="store",       type="string", help="Vector of Cell_2 extention", default=[0.,0.,0.], nargs=3)
+parser.add_option(      "--cell_3_extend",    action="store",       type="string", help="Vector of Cell_3 extention", default=[0.,0.,0.], nargs=3)
 parser.add_option(      "--comment",          action="store",       type="string", help="his file was created by ase.convert.py script",     default='z')
 parser.add_option(      "--vaspold",          action="store_false",                help="comment line",     default=True)
 parser.add_option(      "--vaspsort",         action="store_true",                 help="comment line",     default=False)
@@ -105,14 +109,28 @@ else:
         angle     = options.rotate_angle
         axis      = options.rotate_axis
         ra        = options.rotate_around
-
         origin = [0.,0.,0.]
         if(ra > 0 and ra <= natoms):
             origin  = atoms.arrays['positions'][ra-1]
         else:
             print "Error"
-
         asekk.rotate_atoms(atoms, angle, fromto=trange, axis=axis, origin=origin)
+
+    zero = np.zeros(3)
+    c    = atoms.get_cell()
+    if(  trans == "C1" or trans == "cell1extend"):
+        u = np.array(options.cell_1_extend).astype(np.float)
+        if( not np.array_equal(u,zero) ):
+            c[0] = np.add(c[0], u)
+    if(  trans == "C2" or trans == "cell2extend"):
+        u = np.array(options.cell_2_extend).astype(np.float)
+        if( not np.array_equal(u,zero) ):
+            c[1] = np.add(c[1], u)
+    if(  trans == "C3" or trans == "cell3extend"):
+        u = np.array(options.cell_3_extend).astype(np.float)
+        if( not np.array_equal(u,zero) ):
+            c[2] = np.add(c[2], u)
+    atoms.set_cell(c)
 
 
     # >>>>>>>>>>>>>>>>>>>>> WRITE GEOMETRY <<<<<<<<<<<<<<<<<<<<

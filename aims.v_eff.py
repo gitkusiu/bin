@@ -48,14 +48,29 @@ min_x = min(points[:,0])
 min_y = min(points[:,1])
 min_z = min(points[:,2])
 
-density=100j
+dd=int(sys.argv[num-2])
+
+density=complex(0.0,dd)
 grid_x, grid_y , grid_z = np.mgrid[min_x:max_x:2*density, min_y:max_y:density, min_z:max_z:density]
-grid_z2 = griddata(points, values, (grid_x, grid_y , grid_z), method='nearest')
+interpolation = griddata(points, values, (grid_x, grid_y , grid_z), method='nearest')
+print interpolation.shape
 
 #plt.subplot(221)
-#plt.imshow(grid_z2[0,:,:])
+
 #plt.gcf().set_size_inches(10, 10)
+npoints = density.imag
+print 
+plt.imshow(interpolation[:,:,npoints*0.47], interpolation='nearest')
+plt.grid()
+plt.axis([0.4*npoints,0.6*npoints,0.5*npoints,npoints])
+
+plt.savefig('v_eff_'+str(npoints)+'j.png')
 #plt.show()
+
+#s = len(interpolation[0,0,:])
+#for i in range(s):
+#    plt.imshow(interpolation[:,:,i])
+#    plt.savefig('v_eff'+str(i)+'.png')
 
 
 
@@ -63,32 +78,14 @@ atoms = read_aims("geometry.in")
 cell = np.array(    [[max_x-min_x, 0.         ,0.         ],\
                      [0.0        , max_y-min_y,0.         ],\
                      [0.         , 0.         ,max_z-min_z]]    )
-atoms.set_cell(cell*0.5)
-shift = np.array([min_x,min_y,min_z])
-atoms.translate(-0.5*shift)
+print cell
 
-write_cube("tmp.cube",atoms,grid_z2)
+#atoms.set_cell(cell*0.5)
+#shift = np.array([min_x,min_y,min_z])
+#atoms.translate(-0.5*shift)
 
-
-
-
-
-##print values
-##print poi
-## sort grid
-##grid_sorted=sorted(grid, key=lambda x: x[2])
+#write_cube("v_eff.cube",atoms,interpolation)
 
 
-### calculate an average along z axis
-##z = grid_sorted[0][2]
-##s = 0.0               # summ for average calculations
-##n = 0                 # number of poiunts taken for average
-##for i in grid_sorted:
-##    if(i[2] == z): # still at the same height - continue summing
-##        s += i[3]
-##        n += 1
-##    else:             # new height 
-##        print z, s/n, n  # print avearage from previous height
-##        z = i[2]      # begin new summing
-##        s = i[3]
-##        n = 1
+
+
