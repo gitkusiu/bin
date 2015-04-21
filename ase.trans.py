@@ -36,12 +36,12 @@ parser.add_option(      "--translate_vector", action="store",       type="float"
 parser.add_option(      "--rotate_angle",     action="store",       type="float",  help="Angle  of rotation",    default=0.0)
 parser.add_option(      "--rotate_around",    action="store",       type="int",    help="Number of atom around which rotation should be performed")
 parser.add_option(      "--rotate_axis",      action="store",       type="string", help="Rotation axis",  default='z')
-parser.add_option(      "--cell_1_extend",    action="store",       type="string", help="Vector of Cell_1 extention", default=[0.,0.,0.], nargs=3)
-parser.add_option(      "--cell_2_extend",    action="store",       type="string", help="Vector of Cell_2 extention", default=[0.,0.,0.], nargs=3)
-parser.add_option(      "--cell_3_extend",    action="store",       type="string", help="Vector of Cell_3 extention", default=[0.,0.,0.], nargs=3)
-parser.add_option(      "--cell_1_set",       action="store",       type="string", help="Vector of Cell_1")
-parser.add_option(      "--cell_2_set",       action="store",       type="string", help="Vector of Cell_2")
-parser.add_option(      "--cell_3_set",       action="store",       type="string", help="Vector of Cell_3")
+parser.add_option(      "--cellExtend",       action="store",       type="string", help="Vector of Cell_1 extention", nargs=3)
+#parser.add_option(      "--cell_2_extend",    action="store",       type="string", help="Vector of Cell_2 extention", default=[0.,0.,0.], nargs=3)
+#parser.add_option(      "--cell_3_extend",    action="store",       type="string", help="Vector of Cell_3 extention", default=[0.,0.,0.], nargs=3)
+parser.add_option(      "--cellSet",          action="store",       type="string", help="Vector of Cell_1", nargs=3)
+#parser.add_option(      "--cellSet",       action="store",       type="string", help="Vector of Cell_2", nargs=3)
+#parser.add_option(      "--cell_3_set",       action="store",       type="string", help="Vector of Cell_3", nargs=3)
 parser.add_option(      "--comment",          action="store",       type="string", help="his file was created by ase.convert.py script",     default='z')
 parser.add_option(      "--vaspold",          action="store_false",                help="comment line",     default=True)
 parser.add_option(      "--vaspsort",         action="store_true",                 help="comment line",     default=False)
@@ -119,20 +119,25 @@ else:
             print "Error"
         asekk.rotate_atoms(atoms, angle, fromto=trange, axis=axis, origin=origin)
 
-    zero = np.zeros(3)
-    c    = atoms.get_cell()
-    if(  trans == "C1" or trans == "cell_1_extend"):
-        u = np.array(options.cell_1_extend).astype(np.float)
-        if( not np.array_equal(u,zero) ):
-            c[0] = np.add(c[0], u)
-    if(  trans == "C2" or trans == "cell_2_extend"):
-        u = np.array(options.cell_2_extend).astype(np.float)
-        if( not np.array_equal(u,zero) ):
-            c[1] = np.add(c[1], u)
-    if(  trans == "C3" or trans == "cell_3_extend"):
-        u = np.array(options.cell_3_extend).astype(np.float)
-        if( not np.array_equal(u,zero) ):
-            c[2] = np.add(c[2], u)
+    zero     = np.zeros(3)
+    cSet     = np.array(options.cellSet).astype(np.float)
+    cExtend  = np.array(options.cellExtend).astype(np.float)
+    c        = atoms.get_cell()
+    if(  trans == "C1"  ):
+        if(options.cellSet != None ):
+            c[0] = cSet
+        if(options.cellExtend != None ):
+            c[0] = np.add(c[0], cExtend)
+    if(  trans == "C2"  ):
+        if(options.cellSet != None ):
+            c[1] = cSet
+        if(options.cellExtend != None):
+            c[1] = np.add(c[1], cExtend)
+    if(  trans == "C3" ):
+        if(options.cellSet != None):
+            c[2] = cSet
+        if(options.cellExtend != None):
+            c[2] = np.add(c[2], cExtend)
     atoms.set_cell(c)
 
 
