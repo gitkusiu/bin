@@ -1,0 +1,80 @@
+#!/usr/bin/python
+
+
+#TODO this is supposed to be a quite large converter scirpt 
+# ase.convert.py -i inport_format -o output_format
+import sys
+import os.path
+import numpy as np
+
+from ase.io.aims import read_aims_output
+from ase.io.xyz import write_xyz
+
+from optparse import OptionParser
+
+import asekk
+
+num = len(sys.argv)
+ifile = sys.argv[num-1]
+xyzCellFile = os.path.splitext(ifile)[0]+".lvs"
+
+parser = OptionParser()
+parser.add_option("-i", "--input",            action="store",       type="string",                      help="input file format")
+parser.add_option("-g", "--get",              action="store",       type="string", default="positions", help="Type of data we want to get")
+parser.add_option("-o", "--output",           action="store",       type="string", default="xyz",       help="output file format")
+parser.add_option(      "--step",             action="store",       type="int",    default=None,        help="Step number")
+parser.add_option(      "--steps",            action="store",       type="int",    default=None,        help="Step number", nargs=2)
+(options, args) = parser.parse_args()
+
+#TODO
+# 1. For larger numer of input formats make validation of other options
+#    Especialy '--get' should be checket. I may have a output file which does not contain all '--get' data
+
+output = read_aims_output(sys.argv[num-1], slice(0,None,1))
+n = len(output)
+
+
+
+#deduce stape range
+one_step   = options.step != None
+more_steps = options.steps != None
+step_range = [0,0]
+if (one_step != more_steps): # only --step or --steps is used
+    if(one_step):
+        step_range = [options.step,options.step]
+    else:
+        step_range = options.steps
+else:
+    if(one_step == False and more_steps == False):
+        step_range = [1,n]
+    else:                   # can not have '--step' and '--steps' specified together
+        print "Error: You have specified --step and --steps together. Please specifie only one of them."
+        print "sys.exit()"
+        sys.exit()
+# check of stape range reasonability
+if  (step_range[0] < 1 or step_range[1] > n):
+    print "Error: specifies step range out of the [1,number of steps] range."
+    print "sys.exit()"
+    sys.exit()
+elif(step_range[0] > step_range[1]):
+    print "Error: range is negatif ('start' if larger than 'stop')."
+    print "sys.exit()"
+    sys.exit()
+
+num = len(sys.argv)
+if(num < 2):
+    parser.print_help()
+else:
+
+    if(n > 0):
+        if(options.get == "nosteps"):
+            print n
+        if(options.get == "positions"):
+            start = step_range[0]
+            stop  = step_range[1]
+            for i in range(start, stop+1):
+#            for i, step in enumerate(output):
+                step = output[i-1]
+                comm = "step no. " + str(i) + " TOTEN = " + str(step.get_total_energy())
+                write_xyz(sys.stdout,step,comment=comm)
+    
