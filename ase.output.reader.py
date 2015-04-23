@@ -30,10 +30,14 @@ parser.add_option(      "--steps",            action="store",       type="int", 
 # 1. For larger numer of input formats make validation of other options
 #    Especialy '--get' should be checket. I may have a output file which does not contain all '--get' data
 
+
+num = len(sys.argv)
+if(num < 2):
+    parser.print_help()
+sys.exit()
+
 output = read_aims_output(sys.argv[num-1], slice(0,None,1))
 n = len(output)
-
-
 
 #deduce stape range
 one_step   = options.step != None
@@ -61,20 +65,16 @@ elif(step_range[0] > step_range[1]):
     print "sys.exit()"
     sys.exit()
 
-num = len(sys.argv)
-if(num < 2):
-    parser.print_help()
-else:
 
-    if(n > 0):
-        if(options.get == "nosteps"):
-            print n
-        if(options.get == "positions"):
-            start = step_range[0]
-            stop  = step_range[1]
-            for i in range(start, stop+1):
-#            for i, step in enumerate(output):
-                step = output[i-1]
-                comm = "step no. " + str(i) + " TOTEN = " + str(step.get_total_energy())
-                write_xyz(sys.stdout,step,comment=comm)
-    
+if(n > 0):
+    if(options.get == "nosteps"):
+        print n
+    if(options.get == "positions"):
+        start = step_range[0]
+        stop  = step_range[1]
+        for i in range(start, stop+1):
+#         for i, step in enumerate(output):
+            step = output[i-1]
+            comm = "step no. " + str(i) + " TOTEN = " + str(step.get_total_energy())
+            write_xyz(sys.stdout,step,comment=comm)
+
