@@ -34,7 +34,7 @@ parser.add_option(      "--steps",            action="store",       type="int", 
 num = len(sys.argv)
 if(num < 2):
     parser.print_help()
-sys.exit()
+    sys.exit()
 
 output = read_aims_output(sys.argv[num-1], slice(0,None,1))
 n = len(output)
