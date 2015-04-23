@@ -8,7 +8,9 @@ import os.path
 import numpy as np
 
 from ase.io.aims import read_aims_output
-from ase.io.xyz import write_xyz
+
+from ase.io.aims import write_aims
+from ase.io.xyz  import write_xyz
 
 from optparse import OptionParser
 
@@ -16,7 +18,7 @@ import asekk
 
 num = len(sys.argv)
 ifile = sys.argv[num-1]
-xyzCellFile = os.path.splitext(ifile)[0]+".lvs"
+
 
 parser = OptionParser()
 parser.add_option("-i", "--input",            action="store",       type="string",                      help="input file format")
@@ -72,9 +74,22 @@ if(n > 0):
     if(options.get == "positions"):
         start = step_range[0]
         stop  = step_range[1]
+# >>>>>>>>>>>>>>>>>>>>>>>>> TODO <<<<<<<<<<<<<<<<<<<<<<<<<
+#        if(options.output == "xyz"):
+#            cell = output[0].get_cell()
+#            f    = open('answer.lvs', 'w')
+#            print ' '.join(str(cell[0,:]))
+#            f.write(str(cell[0,:]))
+#            f.write(str(cell[1,:]))
+#            f.write(str(cell[2,:]))
+#            print cell
+
         for i in range(start, stop+1):
 #         for i, step in enumerate(output):
             step = output[i-1]
             comm = "step no. " + str(i) + " TOTEN = " + str(step.get_total_energy())
-            write_xyz(sys.stdout,step,comment=comm)
+#            if(oformat == "geometry.in"):  Maybe it is not got idea to print it in 'geometry.in' format since it does not support multiple steps convention (movie storing)
+#                write_aims("geometry.in", atoms)
+            if(options.output == "xyz"):
+                write_xyz(sys.stdout,step,comment=comm)
 
