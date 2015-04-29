@@ -148,7 +148,12 @@ else:
 
     # >>>>>>>>>>>>>>>>>>>>> WRITE GEOMETRY <<<<<<<<<<<<<<<<<<<<
     if(oformat == "geometry.in"):
-        write_aims("geometry.in", atoms)
+        tmpname="geometry.in.tmp"
+        write_aims(tmpname, atoms)
+        f = open(tmpname, 'r')
+        print f.read()
+        f.close()
+        os.remove(tmpname)
 #    elif(oformat == "cube"):
 #        write_cube(`,xsf[1],xsf[0])
 #    elif(oformat == "xsf"):

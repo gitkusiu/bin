@@ -64,8 +64,8 @@ plt.imshow(interpolation[:,:,npoints*0.47], interpolation='nearest')
 plt.grid()
 plt.axis([0.4*npoints,0.6*npoints,0.5*npoints,npoints])
 
-plt.savefig('v_eff_'+str(npoints)+'j.png')
-#plt.show()
+#plt.savefig('v_eff_'+str(npoints)+'j.png')
+plt.show()
 
 #s = len(interpolation[0,0,:])
 #for i in range(s):
