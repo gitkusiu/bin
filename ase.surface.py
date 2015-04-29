@@ -1,5 +1,6 @@
 #!/usr/bin/python
 
+import sys
 from ase.io.aims import write_aims
 #from ase.io.cube import write_cube
 #from ase.io.vasp import write_vasp
@@ -8,14 +9,19 @@ from ase.io.aims import write_aims
 
 from ase.lattice.surface import fcc111
 import math
-
-
 from optparse import OptionParser
+
 parser = OptionParser()
 parser.add_option("-a", "--lattice",    action="store", type="float", default=1.0)
 parser.add_option("-p", "--periods",    action="store", type="int",    default=[1,1,1],       help="repetition of the unit cell", nargs=3)
 parser.add_option("-v", "--vaccuum",    action="store", type="float", default=1.0)
 (options, args) = parser.parse_args()
+
+
+num = len(sys.argv)
+if(num < 2):
+    parser.print_help()
+    sys.exit()
 
 
 l=options.lattice
