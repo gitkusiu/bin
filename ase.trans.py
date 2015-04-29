@@ -142,8 +142,10 @@ else:
     atoms.set_cell(c)
 
 
-    if(  trans == "repeat"  ):
-        atoms = atoms * options.repeat_dim
+    if(  trans == "repeat" ):
+        dim = np.array(options.repeat_dim)
+        atoms.set_constraint() ### TODO!!!!!!!!!!!!  I can not awwoid cutting constraint. Check how to fix it
+        atoms = atoms * dim
 
 
     # >>>>>>>>>>>>>>>>>>>>> WRITE GEOMETRY <<<<<<<<<<<<<<<<<<<<
