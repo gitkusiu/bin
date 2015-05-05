@@ -49,29 +49,51 @@ npoints = density.imag
 z0  = min_z + (max_z-min_z)*0.48 
 dz  = ((max_z-min_z)/npoints)
 
-grid_x, grid_y = np.mgrid[min_x:max_x:2*density, min_y:max_y:density]
+#grid_x, grid_y = np.mgrid[min_x:max_x:2*density, min_y:max_y:density]
+grid_x, grid_y = np.mgrid[min_x:max_x:density, min_y:max_y:2*density]
 
 interpolation = np.empty([npoints*2,npoints])
 #print "len(interpolation)", len(interpolation)
 #print interpolation
 #for z0 in np.arange(min_z,max_z,dz):
-for z0 in np.arange(z0-10*dz,z0+10*dz,dz):
-#    print z0
-    condition = (points3D[:,2] > z0-dz) & (points3D[:,2] < z0+dz)
-    p2D = points3D[condition]
-    points2D = p2D[:,0:2]
-    values2D = values3D[condition]
-#    print "p" ,len(points2D), points2D
-#    print "v" ,len(values2D), values2D
+
+#print z0, min_z, max_z
+#print np.arange(min_z,max_z,dz)
+
+
+for z0 in np.arange(min_z,max_z,dz):
+    condition = (points3D[:,2] > z0) & (points3D[:,2] < z0+dz)
+    size=len(np.extract(condition, condition))
+    if(size>1):
+#        print z0, z0+dz
+#        print condition.any()
+#        print (points3D[:,2] > z0)
+#        print (points3D[:,2] < z0+dz)
+#        print condition
+#        print 
+#        print "KK"
+        p2D = points3D[condition]
+        points2D = p2D[:,0:2]
+        values2D = values3D[condition]
+#        print "p" ,len(points2D), points2D
+#        print "v" ,len(values2D), values2D
+#        print "gx" ,len(grid_x), grid_x
+#        print "gy" ,len(grid_y), grid_y
 #grid_x, grid_y , grid_z = np.mgrid[min_x:max_x:2*density, min_y:max_y:density, min_z:max_z:density]
 #interpolation = griddata(points3D, values3D, (grid_x, grid_y , grid_z), method='nearest')
 #interpolation = interpolation[:,:,npoints*0.47]
-    tmp = griddata(points2D, values2D, (grid_x, grid_y), method='linear')
+#    print points2D
+#    print values2D
+        tmp = griddata(points2D, values2D, (grid_x, grid_y), method='nearest')
+#        print "t" ,len(tmp), tmp
+        plt.clf()
+        plt.grid()
+#        plt.axis([0.4*npoints,0.6*npoints,npoints,0.5*npoints])
+        plt.axis([0.2*npoints,npoints,0.2*npoints,0.8*npoints])
+        plt.imshow(tmp, interpolation='nearest')
+        plt.colorbar()
+        plt.savefig('v_eff_'+str((z0-min_z)/dz)+'j.png')
 
-    plt.imshow(tmp, interpolation='nearest')
-    plt.grid()
-    plt.axis([0.4*npoints,0.6*npoints,0.5*npoints,npoints])
-    plt.savefig('v_eff_'+str((z0-min_z)/dz)+'j.png')
 #    plt.show()
 #    print tmp
 
