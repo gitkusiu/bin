@@ -28,7 +28,7 @@ l=options.lattice
 p=options.periods
 v=options.vaccuum
 
-atoms = fcc111('Au', size=p,a=l, vacuum=v)
+atoms = fcc111('Ag', size=p,a=l, vacuum=v)
 
 #c=atoms.get_cell()
 #c[1][0] += l*math.sqrt(2)*0.5

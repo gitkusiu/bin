@@ -22,6 +22,6 @@ p=options.periods
 
 print a
 
-atoms = FaceCenteredCubic(latticeconstant=a, directions=[[1,0,0], [0,1,0], [0,0,1]], size=p, symbol='Au', pbc=(1,1,1))
+atoms = FaceCenteredCubic(latticeconstant=a, directions=[[1,0,0], [0,1,0], [0,0,1]], size=p, symbol='Ag', pbc=(1,1,1))
 
 write_aims("geometry.in", atoms)
