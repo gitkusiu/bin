@@ -147,6 +147,9 @@ else:
         atoms.set_constraint() ### TODO!!!!!!!!!!!!  I can not awwoid cutting constraint. Check how to fix it
         atoms = atoms * dim
 
+#    if(  trans == "extract"):
+#        
+
 
     # >>>>>>>>>>>>>>>>>>>>> WRITE GEOMETRY <<<<<<<<<<<<<<<<<<<<
     if(oformat == "geometry.in"):

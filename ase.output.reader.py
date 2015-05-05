@@ -71,6 +71,7 @@ elif(step_range[0] > step_range[1]):
 if(n > 0):
     if(options.get == "nosteps"):
         print n
+
     if(options.get == "positions"):
         start = step_range[0]
         stop  = step_range[1]
@@ -92,4 +93,11 @@ if(n > 0):
 #                write_aims("geometry.in", atoms)
             if(options.output == "xyz"):
                 write_xyz(sys.stdout,step,comment=comm)
+
+    if(options.get == "Etot"):
+        start = step_range[0]
+        stop  = step_range[1]
+        for i in range(start, stop+1):
+            step = output[i-1]
+            print "step no. " + str(i) + " TOTEN = " + str(step.get_total_energy())
 
