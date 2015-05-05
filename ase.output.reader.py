@@ -38,7 +38,9 @@ if(num < 2):
     parser.print_help()
     sys.exit()
 
-output = read_aims_output(sys.argv[num-1], slice(0,None,1))
+if(options.input == "aims"):
+    output = read_aims_output(sys.argv[num-1], slice(0,None,1))
+
 n = len(output)
 
 #deduce stape range
@@ -71,10 +73,19 @@ elif(step_range[0] > step_range[1]):
 if(n > 0):
     if(options.get == "nosteps"):
         print n
-
-    if(options.get == "positions"):
+    else:
         start = step_range[0]
         stop  = step_range[1]
+        for i in range(start, stop+1):
+            step = output[i-1]
+
+            if(options.get == "Etot"):
+                print str(i) + " " + str(step.get_total_energy())
+
+            elif(options.get == "positions"):
+                comm = "step no. " + str(i) + " TOTEN = " + str(step.get_total_energy())
+                if(options.output == "xyz"):
+                    write_xyz(sys.stdout,step,comment=comm)
 # >>>>>>>>>>>>>>>>>>>>>>>>> TODO <<<<<<<<<<<<<<<<<<<<<<<<<
 #        if(options.output == "xyz"):
 #            cell = output[0].get_cell()
@@ -85,19 +96,5 @@ if(n > 0):
 #            f.write(str(cell[2,:]))
 #            print cell
 
-        for i in range(start, stop+1):
-#         for i, step in enumerate(output):
-            step = output[i-1]
-            comm = "step no. " + str(i) + " TOTEN = " + str(step.get_total_energy())
-#            if(oformat == "geometry.in"):  Maybe it is not got idea to print it in 'geometry.in' format since it does not support multiple steps convention (movie storing)
-#                write_aims("geometry.in", atoms)
-            if(options.output == "xyz"):
-                write_xyz(sys.stdout,step,comment=comm)
 
-    if(options.get == "Etot"):
-        start = step_range[0]
-        stop  = step_range[1]
-        for i in range(start, stop+1):
-            step = output[i-1]
-            print "step no. " + str(i) + " TOTEN = " + str(step.get_total_energy())
 
