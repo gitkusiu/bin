@@ -91,7 +91,8 @@ else:
         elif( opt_grad == "y" ): field = field_grad[1]
         elif( opt_grad == "z" ): field = field_grad[2]
 
-    
+#    print field
+#    print field2
     if(opt_diff):
         field -= field2
 

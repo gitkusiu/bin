@@ -17,6 +17,7 @@ from optparse import OptionParser
 
 parser = OptionParser()
 parser.add_option("-g", "--get",        action="store", type="string", default="positions",     help="Type of data we want to get")
+parser.add_option("-p", "--period",     action="store", type="int", help="period",   nargs=3)
 (options, args) = parser.parse_args()
 
 # count number of command line arguments
@@ -31,6 +32,8 @@ else:
         i=0
         for step in output:
             i += 1
+            if(options.period != None):
+                step = step*options.period
             if(options.get == "positions"):
                 comm = "step no. " + str(i) + " TOTEN = " + str(step.get_total_energy())
                 write_xyz(sys.stdout,step,comment=comm)
