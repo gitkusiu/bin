@@ -20,6 +20,7 @@ parser.add_option("-g", "--get",        action="store", type="string", default="
 parser.add_option("-p", "--period",     action="store", type="int", help="period",   nargs=3)
 (options, args) = parser.parse_args()
 
+
 # count number of command line arguments
 num = len(sys.argv)
 if(num < 2):
@@ -32,9 +33,10 @@ else:
         i=0
         for step in output:
             i += 1
-            if(options.period != None):
-                step = step*options.period
             if(options.get == "positions"):
                 comm = "step no. " + str(i) + " TOTEN = " + str(step.get_total_energy())
+                p=options.period
+                if(p != None):
+                    step = step*(p[0], p[1], p[2])
                 write_xyz(sys.stdout,step,comment=comm)
 #                print step.
