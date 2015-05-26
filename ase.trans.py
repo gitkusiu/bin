@@ -167,5 +167,21 @@ else:
         write_vasp(ostream, atoms, label=options.comment, direct=False,sort=options.vaspsort,vasp5=options.vaspold)
     if(oformat == "xyz"):
         write_xyz(ostream, atoms)
+    if(oformat == "shtm"):
+        d = {}
+        f = open('species.dat', "r")
+        ls = f.read().splitlines()
+        n = int(ls[0])
+        for ii in ls[1:n+1]:
+            i = ii.split()
+            d[i[3]] = int(i[0])
+
+        n   = atoms.get_number_of_atoms()
+        pos = atoms.get_positions()
+        sym = atoms.get_chemical_symbols()
+
+        print atoms.get_number_of_atoms()
+        for s, p in zip(sym, pos):
+            print  d[s], p[0], p[1], p[2]
 
 ##write_cube("tmp.cube",xsf[1],xsf[0])
