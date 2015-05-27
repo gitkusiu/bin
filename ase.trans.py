@@ -147,6 +147,7 @@ else:
     if(  options.cell3Extend !=  None):
         cExtend = np.array(options.cell3Extend).astype(np.float)
         c[1]    = np.add(c[2], cExtend)
+    atoms.set_cell(c)
 
     if(  options.period != None ):
         is_periodic = all(atoms.get_pbc()) and atoms.get_cell().shape == (3, 3)
