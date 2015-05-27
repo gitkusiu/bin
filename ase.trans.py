@@ -30,16 +30,20 @@ xyzCellFile = os.path.splitext(ifile)[0]+".lvs"
 parser = OptionParser()
 parser.add_option("-i", "--input",            action="store",       type="string", help="input file format")
 parser.add_option("-o", "--output",           action="store",       type="string", help="output file format")
-parser.add_option("-t", "--trans",            action="store",       type="string", help="Transformation to be done")
+#parser.add_option("-t", "--trans",            action="store",       type="string", help="Transformation to be done")
 parser.add_option(      "--atoms",            action="store",       type="int",    help="specify the atoms to whcih changes (translation rotation etc. will be made)", nargs=2)
-parser.add_option(      "--translate_vector", action="store",       type="float",  help="Vector of translation", default=[0.,0.,0.], nargs=3)
-parser.add_option(      "--rotate_angle",     action="store",       type="float",  help="Angle  of rotation",    default=0.0)
+parser.add_option("-t", "--translate_vector", action="store",       type="float",  help="Vector of translation", nargs=3)
+parser.add_option("-r", "--rotate_angle",     action="store",       type="float",  help="Angle  of rotation")
 parser.add_option(      "--rotate_around",    action="store",       type="int",    help="Number of atom around which rotation should be performed")
 parser.add_option(      "--rotate_axis",      action="store",       type="string", help="Rotation axis",  default='z')
-parser.add_option(      "--cellExtend",       action="store",       type="string", help="Vector of Cell_1 extention", nargs=3)
+parser.add_option(      "--cell1Extend",       action="store",       type="string", help="Vector of Cell_1 extention", nargs=3)
+parser.add_option(      "--cell2Extend",       action="store",       type="string", help="Vector of Cell_1 extention", nargs=3)
+parser.add_option(      "--cell3Extend",       action="store",       type="string", help="Vector of Cell_1 extention", nargs=3)
 #parser.add_option(      "--cell_2_extend",    action="store",       type="string", help="Vector of Cell_2 extention", default=[0.,0.,0.], nargs=3)
 #parser.add_option(      "--cell_3_extend",    action="store",       type="string", help="Vector of Cell_3 extention", default=[0.,0.,0.], nargs=3)
-parser.add_option(      "--cellSet",          action="store",       type="string", help="Vector of Cell_1", nargs=3)
+parser.add_option(      "--cell1Set",          action="store",       type="string", help="Vector of Cell_1", nargs=3)
+parser.add_option(      "--cell2Set",          action="store",       type="string", help="Vector of Cell_1", nargs=3)
+parser.add_option(      "--cell3Set",          action="store",       type="string", help="Vector of Cell_1", nargs=3)
 #parser.add_option(      "--cellSet",       action="store",       type="string", help="Vector of Cell_2", nargs=3)
 #parser.add_option(      "--cell_3_set",       action="store",       type="string", help="Vector of Cell_3", nargs=3)
 parser.add_option("-p", "--period",           action="store",       type="int", help="simension of repeation", nargs=3)
@@ -60,7 +64,7 @@ if(options.output != None): # default output format
     oformat = options.output
 else:
     oformat = options.input
-trans   = options.trans
+#trans   = options.trans
 trange  = options.atoms
 ostream = sys.stdout
 
@@ -101,7 +105,7 @@ else:
     if(trange == None): # # default range of atoms
         trange = (1, natoms)
 
-    if(  trans == "T" or trans == "translation"):
+    if( options.translate_vector != None ):
         v                               = options.translate_vector
         is_translation_nonzero          = (v != (0.0,0.0,0.0))
         is_there_any_atoms_to_translate = (trange[1]-trange[0] >= 0)
@@ -109,46 +113,48 @@ else:
             for i in range(trange[0]-1, trange[1]):
                 atoms.arrays['positions'][i] += v
 
-    elif(trans == "R" or trans == "rotation"   ):
+    if(options.rotate_angle != None):
         angle     = options.rotate_angle
         axis      = options.rotate_axis
         ra        = options.rotate_around
         origin = [0.,0.,0.]
-        if(ra > 0 and ra <= natoms):
-            origin  = atoms.arrays['positions'][ra-1]
+        if(ra != None):
+            if(ra > 0 and ra <= natoms):
+                origin  = atoms.arrays['positions'][ra-1]
+            else:
+                print "Error"
         else:
-            print "Error"
+            orgin = np.array([0.0,0.0,0.0])
         asekk.rotate_atoms(atoms, angle, fromto=trange, axis=axis, origin=origin)
 
-    zero     = np.zeros(3)
-    cSet     = np.array(options.cellSet).astype(np.float)
-    cExtend  = np.array(options.cellExtend).astype(np.float)
     c        = atoms.get_cell()
-    if(  trans == "C1"  ):
-        if(options.cellSet != None ):
-            c[0] = cSet
-        if(options.cellExtend != None ):
-            c[0] = np.add(c[0], cExtend)
-    if(  trans == "C2"  ):
-        if(options.cellSet != None ):
-            c[1] = cSet
-        if(options.cellExtend != None):
-            c[1] = np.add(c[1], cExtend)
-    if(  trans == "C3" ):
-        if(options.cellSet != None):
-            c[2] = cSet
-        if(options.cellExtend != None):
-            c[2] = np.add(c[2], cExtend)
-    atoms.set_cell(c)
+    if(  options.cell1Set !=  None): 
+        cSet = np.array(options.cell1Set).astype(np.float)
+        c[0] = cSet
+    if(  options.cell2Set !=  None):
+        cSet = np.array(options.cell2Set).astype(np.float)
+        c[1] = cSet
+    if(  options.cell3Set !=  None):
+        cSet = np.array(options.cell3Set).astype(np.float)
+        c[2] = cSet
 
+    if(  options.cell1Extend !=  None):
+        cExtend = np.array(options.cell1Extend).astype(np.float)
+        c[0]    = np.add(c[0], cExtend)
+    if(  options.cell2Extend !=  None):
+        cExtend = np.array(options.cell2Extend).astype(np.float)
+        c[1]    = np.add(c[1], cExtend)
+    if(  options.cell3Extend !=  None):
+        cExtend = np.array(options.cell3Extend).astype(np.float)
+        c[1]    = np.add(c[2], cExtend)
 
     if(  options.period != None ):
-        dim = np.array(options.repeat_dim)
+        is_periodic = all(atoms.get_pbc()) and atoms.get_cell().shape == (3, 3)
+        if(not is_periodic):
+            sys.exit("ERROR: Call for periodic extention of the system, but supercell or pbc flag setted wrongly.")
+        dim = np.array( options.period)
         atoms.set_constraint() ### TODO!!!!!!!!!!!!  I can not awwoid cutting constraint. Check how to fix it
         atoms = atoms * dim
-
-#    if(  trans == "extract"):
-#        
 
 
     # >>>>>>>>>>>>>>>>>>>>> WRITE GEOMETRY <<<<<<<<<<<<<<<<<<<<
