@@ -42,7 +42,7 @@ parser.add_option(      "--cellExtend",       action="store",       type="string
 parser.add_option(      "--cellSet",          action="store",       type="string", help="Vector of Cell_1", nargs=3)
 #parser.add_option(      "--cellSet",       action="store",       type="string", help="Vector of Cell_2", nargs=3)
 #parser.add_option(      "--cell_3_set",       action="store",       type="string", help="Vector of Cell_3", nargs=3)
-parser.add_option(      "--repeat_dim",       action="store",       type="int", help="simension of repeation", default=[1,1,1], nargs=3)
+parser.add_option("-p", "--period",           action="store",       type="int", help="simension of repeation", nargs=3)
 parser.add_option(      "--comment",          action="store",       type="string", help="his file was created by ase.convert.py script",     default='z')
 parser.add_option(      "--vaspold",          action="store_false",                help="comment line",     default=True)
 parser.add_option(      "--vaspsort",         action="store_true",                 help="comment line",     default=False)
@@ -142,7 +142,7 @@ else:
     atoms.set_cell(c)
 
 
-    if(  trans == "repeat" ):
+    if(  options.period != None ):
         dim = np.array(options.repeat_dim)
         atoms.set_constraint() ### TODO!!!!!!!!!!!!  I can not awwoid cutting constraint. Check how to fix it
         atoms = atoms * dim
