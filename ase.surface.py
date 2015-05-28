@@ -31,7 +31,7 @@ p=options.periods
 v=options.vaccuum
 e=options.element
 
-atoms = fcc111(e, size=p,a=l, vacuum=v, orthogonal=True)
+atoms = fcc111(e, size=p,a=l, vacuum=v, orthogonal=False)
 #atoms = fcc111(e, size=p,a=l, vacuum=v)
 
 #c=atoms.get_cell()

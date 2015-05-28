@@ -31,8 +31,10 @@ parser = OptionParser()
 parser.add_option("-i", "--input",            action="store",       type="string", help="input file format")
 #parser.add_option("-o", "--output",           action="store",       type="string", help="output file format")
 #parser.add_option("-t", "--trans",            action="store",       type="string", help="Transformation to be done")
-parser.add_option("-g","--get",              action="store",       type="string", help="what you want to get")
-parser.add_option(       "--atoms",            action="store",       type="int",    help="specify the atoms to whcih changes (translation rotation etc. will be made)", nargs=2)
+parser.add_option("-a",  "--atoms",            action="store",        type="int",    help="specify the atoms to whcih changes (translation rotation etc. will be made)", nargs=2)
+parser.add_option("-d",  "--distance",         action="store_true",   help="Get distance between two atoms")
+parser.add_option("-v",  "--vector",           action="store_true",   help="Get distance vector between two atoms")
+parser.add_option("-n",  "--no_atoms",         action="store_true",   help="Get number of atoms")
 #parser.add_option(      "--translate_vector", action="store",       type="float",  help="Vector of translation", default=[0.,0.,0.], nargs=3)
 #parser.add_option(      "--rotate_angle",     action="store",       type="float",  help="Angle  of rotation",    default=0.0)
 #parser.add_option(      "--rotate_around",    action="store",       type="int",    help="Number of atom around which rotation should be performed")
@@ -92,13 +94,18 @@ else:
             atoms.set_pbc([True,True,True])
 
 
-    if(options.get == "diff"):
+    if(options.vector == True):
         a = options.atoms
         r1 = atoms.arrays['positions'][a[0]-1] 
         r2 = atoms.arrays['positions'][a[1]-1] 
         dr = r2-r1
-        print dr
-    if(options.get == "natoms"):
+        print dr[0], dr[1], dr[2]
+
+    if(options.distance == True):
+        a = options.atoms
+        print atoms.get_distance(a[0],a[1])
+
+    if(options.no_atoms == True):
         print atoms.get_number_of_atoms()
 
 
