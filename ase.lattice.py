@@ -14,14 +14,16 @@ from optparse import OptionParser
 parser = OptionParser()
 parser.add_option("-a", "--lattice",    action="store",       type="float", default=1.0)
 parser.add_option("-p", "--periods",          action="store", type="int",    default=[1,1,1],       help="repetition of the unit cell", nargs=3)
+parser.add_option("-e", "--element",    action="store", type="string", default='H')
 (options, args) = parser.parse_args()
 
 
 a=options.lattice
 p=options.periods
+e=options.element
 
-print a
+#print a
 
-atoms = FaceCenteredCubic(latticeconstant=a, directions=[[1,0,0], [0,1,0], [0,0,1]], size=p, symbol='Ag', pbc=(1,1,1))
+atoms = FaceCenteredCubic(latticeconstant=a, directions=[[1,0,0], [0,1,0], [0,0,1]], size=p, symbol=e, pbc=(1,1,1))
 
 write_aims("geometry.in", atoms)
