@@ -44,6 +44,9 @@ parser.add_option(      "--cell3Extend",       action="store",       type="strin
 parser.add_option(      "--cell1Set",          action="store",       type="string", help="Vector of Cell_1", nargs=3)
 parser.add_option(      "--cell2Set",          action="store",       type="string", help="Vector of Cell_1", nargs=3)
 parser.add_option(      "--cell3Set",          action="store",       type="string", help="Vector of Cell_1", nargs=3)
+parser.add_option(      "--cutX",              action="store",       type="float", help="Cut X")
+parser.add_option(      "--cutY",              action="store",       type="float", help="Cut Y")
+parser.add_option(      "--cutZ",              action="store",       type="float", help="Cut Z")
 #parser.add_option(      "--cellSet",       action="store",       type="string", help="Vector of Cell_2", nargs=3)
 #parser.add_option(      "--cell_3_set",       action="store",       type="string", help="Vector of Cell_3", nargs=3)
 parser.add_option("-p", "--period",           action="store",       type="int", help="simension of repeation", nargs=3)
@@ -156,6 +159,7 @@ else:
         dim = np.array( options.period)
         atoms.set_constraint() ### TODO!!!!!!!!!!!!  I can not awwoid cutting constraint. Check how to fix it
         atoms = atoms * dim
+
 
 
     # >>>>>>>>>>>>>>>>>>>>> WRITE GEOMETRY <<<<<<<<<<<<<<<<<<<<
