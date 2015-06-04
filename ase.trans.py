@@ -45,6 +45,9 @@ parser.add_option(      "--c3",               action="store",       type="float"
 parser.add_option(      "--c1+",              action="store",       type="float", help="Extend cell 1 by scalar")
 parser.add_option(      "--c2+",              action="store",       type="float", help="Extend cell 2 by scalar")
 parser.add_option(      "--c3+",              action="store",       type="float", help="Extend cell 3 by scalar")
+parser.add_option(      "--c1*",              action="store",       type="float", help="Multiply cell 1 by scalar")
+parser.add_option(      "--c2*",              action="store",       type="float", help="Multiply cell 2 by scalar")
+parser.add_option(      "--c3*",              action="store",       type="float", help="Multiply cell 3 by scalar")
 parser.add_option(      "--c1+v",             action="store",       type="float", help="Add to cell 1 a vector", nargs=3)
 parser.add_option(      "--c2+v",             action="store",       type="float", help="Add to cell 2 a vector", nargs=3)
 parser.add_option(      "--c3+v",             action="store",       type="float", help="Add to cell 3 a vector", nargs=3)
@@ -180,7 +183,6 @@ else:
     if( c2 != None ):   c[1] = np.add(c[1], c2)
     if( c3 != None ):   c[2] = np.add(c[2], c3)
 
-
     # enlarging cell vectors by scalar
     c1 = options.__dict__['c1+']
     c2 = options.__dict__['c2+']
@@ -197,6 +199,14 @@ else:
         norm   = np.linalg.norm(c[2])
         factor = (norm+c3)/norm
         c[2]   = np.multiply(c[2], factor)
+
+    c1 = options.__dict__['c1*']
+    c2 = options.__dict__['c2*']
+    c3 = options.__dict__['c3*']
+    if( c1 != None ):   c[0] = np.multiply(c[0], c1)
+    if( c2 != None ):   c[1] = np.multiply(c[1], c2)
+    if( c3 != None ):   c[2] = np.multiply(c[2], c3)
+
 
 
     # enlarging cell vectors rotation
