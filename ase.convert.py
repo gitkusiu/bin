@@ -83,7 +83,13 @@ else:
 
 
     if(oformat == "geometry.in"):
-        write_aims("geometry.in", atoms)
+        tmpname="geometry.in.tmp"
+        write_aims(tmpname, atoms)
+        f = open(tmpname, 'r')
+        print f.read()
+        f.close()
+        os.remove(tmpname)
+#        write_aims("geometry.in", atoms)
 #    elif(oformat == "cube"):
 #        write_cube(`,xsf[1],xsf[0])
 #    elif(oformat == "xsf"):

@@ -98,8 +98,8 @@ else:
         a = options.atoms
         r1 = atoms.arrays['positions'][a[0]-1] 
         r2 = atoms.arrays['positions'][a[1]-1] 
-        print a[0],r1
-        print a[1],r2
+#        print a[0],r1
+#        print a[1],r2
         dr = r2-r1
         print dr[0], dr[1], dr[2]
 
