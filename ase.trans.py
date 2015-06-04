@@ -244,6 +244,15 @@ else:
     elif(oformat == "POSCAR"):
         write_vasp(ostream, atoms, label=options.comment, direct=False,sort=options.vaspsort,vasp5=options.vaspold)
     if(oformat == "xyz"):
+        c   = atoms.get_cell()
+        pbc = atoms.get_pbc()
+        fname = "answer.lvs"
+        if(os.path.isfile(fname)):
+            fname += ".new"
+        if( c != None and pbc.all()):
+            f    = open(fname, "w")
+            for i in range(3):
+                f.write(str(c[i][0]) + '    '+ str(c[i][1]) + '    ' +  str(c[i][2]) + '\n')
         write_xyz(ostream, atoms)
     if(oformat == "shtm"):
         d = {}
