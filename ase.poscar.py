@@ -16,6 +16,7 @@ from ase.constraints import FixAtoms
 
 
 from optparse import OptionParser
+from optparse import OptionGroup
 
 
 parser = OptionParser()
@@ -23,13 +24,33 @@ parser.add_option("-f", "--format",           action="store", type="string", def
 parser.add_option("-a", "--atoms",            action="store", type="int",    default=[-1,-1],       help="specify the atoms to whcih changes (translation rotation etc. will be made)", nargs=2)
 parser.add_option("-p", "--periods",          action="store", type="int",    default=[1,1,1],       help="repetition of the unit cell", nargs=3)
 parser.add_option("-T", "--Translation",      action="store", type="float",  default=[0.0,0.0,0.0], help="ss", nargs=3)
-parser.add_option("-r", "--rotation_angle",   action="store", type="float",  default=0.0,           help="rotation angle", nargs=1)
-parser.add_option(      "--rotate_around",    action="store", type="int",    default=0, help="rotate around nth atom", nargs=1)
+
+rotation =  OptionGroup(parser, "Rotation")
+rotation.add_option("-r", "--rotation_angle",   action="store", type="float",  default=0.0,           help="rotation angle", nargs=1)
+rotation.add_option(      "--rotate_around",    action="store", type="int",    default=0, help="rotate around nth atom", nargs=1)
+parser.add_option_group(rotation)
+
+
+cell =  OptionGroup(parser, "Cell")
 #parser.add_option(      "--rotation_vector",  action="store", type="float",  default=[0.0,0.0,0.0], help="rotation point", nargs=1)
-parser.add_option("-u", "--cell_scale",       action="store", type="float",  default=[1.0,1.0,1.0],           help="unit cell scalling factor", nargs=3)
-parser.add_option(      "--cell1_extend",      action="store", type="float",  default=[0.0,0.0,0.0],           help="unit cell scalling factor", nargs=3)
-parser.add_option(      "--cell2_extend",      action="store", type="float",  default=[0.0,0.0,0.0],           help="unit cell scalling factor", nargs=3)
-parser.add_option(      "--cell3_extend",      action="store", type="float",  default=[0.0,0.0,0.0],           help="unit cell scalling factor", nargs=3)
+cell.add_option("-u", "--cell_scale",   action="store", type="float",  default=[1.0,1.0,1.0], help="unit cell scalling factor", nargs=3)
+cell.add_option(      "--cell1_extend", action="store", type="float",  default=[0.0,0.0,0.0], help="unit cell scalling factor", nargs=3)
+cell.add_option(      "--cell2_extend", action="store", type="float",  default=[0.0,0.0,0.0], help="unit cell scalling factor", nargs=3)
+cell.add_option(      "--cell3_extend", action="store", type="float",  default=[0.0,0.0,0.0], help="unit cell scalling factor", nargs=3)
+
+cell.add_option( "-u",
+                 "--cell_scale",
+                 action  = "store",
+                 type    = "float", 
+                 default = [1.0,1.0,1.0],
+                 help    = "unit cell scalling factor",
+                 nargs   = 3 )
+cell.add_option(      "--cell1_extend", action="store", type="float",  default=[0.0,0.0,0.0], help="unit cell scalling factor", nargs=3)
+cell.add_option(      "--cell2_extend", action="store", type="float",  default=[0.0,0.0,0.0], help="unit cell scalling factor", nargs=3)
+cell.add_option(      "--cell3_extend", action="store", type="float",  default=[0.0,0.0,0.0], help="unit cell scalling factor", nargs=3)
+
+parser.add_option_group(cell)
+
 parser.add_option("-c", "--comment",          action="store", type="string", default=" ")
 (options, args) = parser.parse_args()
 
