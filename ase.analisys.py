@@ -35,6 +35,9 @@ parser.add_option("-a",  "--atoms",            action="store",        type="int"
 parser.add_option("-d",  "--distance",         action="store_true",   help="Get distance between two atoms")
 parser.add_option("-v",  "--vector",           action="store_true",   help="Get distance vector between two atoms")
 parser.add_option("-n",  "--no_atoms",         action="store_true",   help="Get number of atoms")
+parser.add_option(       "--lc1",              action="store_true",   help="Get Lenght of cell1")
+parser.add_option(       "--lc2",              action="store_true",   help="Get Lenght of cell2")
+parser.add_option(       "--lc3",              action="store_true",   help="Get Lenght of cell3")
 #parser.add_option(      "--translate_vector", action="store",       type="float",  help="Vector of translation", default=[0.,0.,0.], nargs=3)
 #parser.add_option(      "--rotate_angle",     action="store",       type="float",  help="Angle  of rotation",    default=0.0)
 #parser.add_option(      "--rotate_around",    action="store",       type="int",    help="Number of atom around which rotation should be performed")
@@ -98,8 +101,8 @@ else:
         a = options.atoms
         r1 = atoms.arrays['positions'][a[0]-1] 
         r2 = atoms.arrays['positions'][a[1]-1] 
-        print a[0],r1
-        print a[1],r2
+#        print a[0],r1
+#        print a[1],r2
         dr = r2-r1
         print dr[0], dr[1], dr[2]
 
@@ -109,6 +112,11 @@ else:
 
     if(options.no_atoms == True):
         print atoms.get_number_of_atoms()
+
+    c        = atoms.get_cell()
+    if(options.lc1 == True): print np.linalg.norm(c[0])
+    if(options.lc2 == True): print np.linalg.norm(c[1])
+    if(options.lc3 == True): print np.linalg.norm(c[2])
 
 
 

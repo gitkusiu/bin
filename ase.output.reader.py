@@ -8,6 +8,7 @@ import os.path
 import numpy as np
 
 from ase.io.aims import read_aims_output
+from ase.io.vasp import read_vasp_out
 
 from ase.io.aims import write_aims
 from ase.io.xyz  import write_xyz
@@ -26,6 +27,8 @@ parser.add_option("-g", "--get",              action="store",       type="string
 parser.add_option("-o", "--output",           action="store",       type="string", default="xyz",       help="output file format")
 parser.add_option(      "--step",             action="store",       type="int",    default=None,        help="Step number")
 parser.add_option(      "--steps",            action="store",       type="int",    default=None,        help="Step number", nargs=2)
+parser.add_option(      "--atom",             action="store",       type="int",    help="specify the atom",)
+parser.add_option(      "--atoms",            action="store",       type="int",    help="specify the atoms range", nargs=2)
 (options, args) = parser.parse_args()
 
 #TODO
@@ -40,13 +43,15 @@ if(num < 2):
 
 if(options.input == "aims"):
     output = read_aims_output(sys.argv[num-1], slice(0,None,1))
-
+if(options.input == "vasp"):
+    output = read_vasp_out(sys.argv[num-1], slice(0,None,1))
 n = len(output)
 
 #deduce stape range
 one_step   = options.step != None
 more_steps = options.steps != None
 step_range = [0,0]
+atoms      = options.atoms
 if (one_step != more_steps): # only --step or --steps is used
     if(one_step):
         step_range = [options.step,options.step]
@@ -70,6 +75,19 @@ elif(step_range[0] > step_range[1]):
     sys.exit()
 
 
+#set atomic range
+if (options.atom  != None):
+    a = options.atom - 1
+    atoms = (a,a)
+elif (options.atoms  != None):
+    atoms = np.add(options.atoms,-1)
+else:
+    step    = output[0]
+    n_atoms = step.get_number_of_atoms()
+    atoms   = (0,n_atoms-1)
+#print atoms
+
+
 if(n > 0):
     if(options.get == "nosteps"):
         print n
@@ -86,6 +104,14 @@ if(n > 0):
                 comm = "step no. " + str(i) + " TOTEN = " + str(step.get_total_energy())
                 if(options.output == "xyz"):
                     write_xyz(sys.stdout,step,comment=comm)
+
+            elif(options.get == "force"):
+                fs       = step.get_forces(apply_constraint=False)
+                fs_range = fs[atoms[0]:atoms[1]+1]
+                f_total  = [0., 0., 0.]
+                for f in fs_range:
+                    f_total += f
+                print float(f_total[0]), float(f_total[1]), float(f_total[2])
 # >>>>>>>>>>>>>>>>>>>>>>>>> TODO <<<<<<<<<<<<<<<<<<<<<<<<<
 #        if(options.output == "xyz"):
 #            cell = output[0].get_cell()

@@ -7,6 +7,7 @@ import sys
 import os.path
 import numpy as np
 
+from ase import Atom
 from ase.io.aims import read_aims
 from ase.io.cube import read_cube
 from ase.io.vasp import read_vasp
@@ -37,22 +38,32 @@ parser.add_option("-s", "--scale",            action="store",       type="float"
 parser.add_option("-r", "--rotate_angle",     action="store",       type="float",  help="Angle  of rotation")
 parser.add_option(      "--rotate_around",    action="store",       type="int",    help="Number of atom around which rotation should be performed")
 parser.add_option(      "--rotate_axis",      action="store",       type="string", help="Rotation axis",  default='z')
-#                       "--c1+"
-parser.add_option(      "--cell1Extend",       action="store",       type="string", help="Vector of Cell_1 extention", nargs=3)
-parser.add_option(      "--cell2Extend",       action="store",       type="string", help="Vector of Cell_1 extention", nargs=3)
-parser.add_option(      "--cell3Extend",       action="store",       type="string", help="Vector of Cell_1 extention", nargs=3)
-#parser.add_option(      "--cell_2_extend",    action="store",       type="string", help="Vector of Cell_2 extention", default=[0.,0.,0.], nargs=3)
-#parser.add_option(      "--cell_3_extend",    action="store",       type="string", help="Vector of Cell_3 extention", default=[0.,0.,0.], nargs=3)
-#                       "--c1"
-parser.add_option(      "--cell1Set",          action="store",       type="string", help="Vector of Cell_1", nargs=3)
-parser.add_option(      "--cell2Set",          action="store",       type="string", help="Vector of Cell_1", nargs=3)
-parser.add_option(      "--cell3Set",          action="store",       type="string", help="Vector of Cell_1", nargs=3)
+
+parser.add_option(      "--c1",               action="store",       type="float", help="Set cell_1", nargs=3)
+parser.add_option(      "--c2",               action="store",       type="float", help="Set cell_2", nargs=3)
+parser.add_option(      "--c3",               action="store",       type="float", help="Set cell_3", nargs=3)
+parser.add_option(      "--c1+",              action="store",       type="float", help="Extend cell 1 by scalar")
+parser.add_option(      "--c2+",              action="store",       type="float", help="Extend cell 2 by scalar")
+parser.add_option(      "--c3+",              action="store",       type="float", help="Extend cell 3 by scalar")
+parser.add_option(      "--c1*",              action="store",       type="float", help="Multiply cell 1 by scalar")
+parser.add_option(      "--c2*",              action="store",       type="float", help="Multiply cell 2 by scalar")
+parser.add_option(      "--c3*",              action="store",       type="float", help="Multiply cell 3 by scalar")
+parser.add_option(      "--c1+v",             action="store",       type="float", help="Add to cell 1 a vector", nargs=3)
+parser.add_option(      "--c2+v",             action="store",       type="float", help="Add to cell 2 a vector", nargs=3)
+parser.add_option(      "--c3+v",             action="store",       type="float", help="Add to cell 3 a vector", nargs=3)
+parser.add_option(      "--c1r",              action="store",       type="float", help="Rotate cell 1")
+parser.add_option(      "--c2r",              action="store",       type="float", help="Rotate cell 2")
+parser.add_option(      "--c3r",              action="store",       type="float", help="Rotate cell 3")
+
+
 parser.add_option(      "--cutX",              action="store",       type="float", help="Cut X")
 parser.add_option(      "--cutY",              action="store",       type="float", help="Cut Y")
 parser.add_option(      "--cutZ",              action="store",       type="float", help="Cut Z")
 #parser.add_option(      "--cellSet",       action="store",       type="string", help="Vector of Cell_2", nargs=3)
 #parser.add_option(      "--cell_3_set",       action="store",       type="string", help="Vector of Cell_3", nargs=3)
 parser.add_option("-p", "--period",           action="store",        type="int",    help="simension of repeation", nargs=3)
+parser.add_option(      "--copy",             action="store",        type="float",  help="Angle  of rotation", nargs=3)
+
 parser.add_option(      "--comment",          action="store",        type="string", help="his file was created by ase.convert.py script",     default='z')
 parser.add_option(      "--vaspold",          action="store_false",                 help="comment line",     default=True)
 parser.add_option(      "--vaspsort",         action="store_true",                  help="comment line",     default=False)
@@ -119,6 +130,22 @@ else:
             for i in range(trange[0]-1, trange[1]):
                 atoms.arrays['positions'][i] += v
 
+    if(  options.copy != None ):
+        c                          = options.copy
+        is_translation_nonzero     = (c != (0.0,0.0,0.0))
+        is_there_any_atoms_to_copy = (trange[1]-trange[0] >= 0)
+        if( is_translation_nonzero and is_there_any_atoms_to_copy ):
+            symbols   = atoms.get_chemical_symbols()
+            positions = atoms.get_positions()
+            for i in range(trange[0]-1, trange[1]):
+                pos    = positions[i] + c
+                symbol = symbols[i]
+                atoms += Atom(symbol, pos)
+
+
+#     TODO wrapper to the unit cell
+
+
     if( options.scale != None ):
         s = options.scale
         for r in atoms.arrays['positions']:
@@ -141,26 +168,55 @@ else:
             orgin = np.array([0.0,0.0,0.0])
         asekk.rotate_atoms(atoms, angle, fromto=trange, axis=axis, origin=origin)
 
-    c        = atoms.get_cell()
-    if(  options.cell1Set !=  None): 
-        cSet = np.array(options.cell1Set).astype(np.float)
-        c[0] = cSet
-    if(  options.cell2Set !=  None):
-        cSet = np.array(options.cell2Set).astype(np.float)
-        c[1] = cSet
-    if(  options.cell3Set !=  None):
-        cSet = np.array(options.cell3Set).astype(np.float)
-        c[2] = cSet
 
-    if(  options.cell1Extend !=  None):
-        cExtend = np.array(options.cell1Extend).astype(np.float)
-        c[0]    = np.add(c[0], cExtend)
-    if(  options.cell2Extend !=  None):
-        cExtend = np.array(options.cell2Extend).astype(np.float)
-        c[1]    = np.add(c[1], cExtend)
-    if(  options.cell3Extend !=  None):
-        cExtend = np.array(options.cell3Extend).astype(np.float)
-        c[1]    = np.add(c[2], cExtend)
+    c        = atoms.get_cell()
+
+    if(  options.c1 !=  None):  c[0] = options.c1
+    if(  options.c2 !=  None):  c[1] = options.c2
+    if(  options.c3 !=  None):  c[2] = options.c3
+
+    # enlarging cell vectors by adding vectors
+    c1 = options.__dict__['c1+v']
+    c2 = options.__dict__['c2+v']
+    c3 = options.__dict__['c3+v']
+    if( c1 != None ):   c[0] = np.add(c[0], c1)
+    if( c2 != None ):   c[1] = np.add(c[1], c2)
+    if( c3 != None ):   c[2] = np.add(c[2], c3)
+
+    # enlarging cell vectors by scalar
+    c1 = options.__dict__['c1+']
+    c2 = options.__dict__['c2+']
+    c3 = options.__dict__['c3+']
+    if( c1 != None ):
+        norm   = np.linalg.norm(c[0])
+        factor = (norm+c1)/norm
+        c[0]   = np.multiply(c[0], factor)
+    if( c2 != None ):
+        norm   = np.linalg.norm(c[1])
+        factor = (norm+c2)/norm
+        c[1]   = np.multiply(c[1], factor)
+    if( c3 != None ):
+        norm   = np.linalg.norm(c[2])
+        factor = (norm+c3)/norm
+        c[2]   = np.multiply(c[2], factor)
+
+    c1 = options.__dict__['c1*']
+    c2 = options.__dict__['c2*']
+    c3 = options.__dict__['c3*']
+    if( c1 != None ):   c[0] = np.multiply(c[0], c1)
+    if( c2 != None ):   c[1] = np.multiply(c[1], c2)
+    if( c3 != None ):   c[2] = np.multiply(c[2], c3)
+
+
+
+    # enlarging cell vectors rotation
+    c1 = options.__dict__['c1r']
+    c2 = options.__dict__['c2r']
+    c3 = options.__dict__['c3r']
+    if( c1 != None ): c[0] = asekk.rotate(c[0], c1, axis=options.__dict__['rotate_axis'])
+    if( c2 != None ): c[1] = asekk.rotate(c[1], c2, axis=options.__dict__['rotate_axis'])
+    if( c3 != None ): c[2] = asekk.rotate(c[2], c3, axis=options.__dict__['rotate_axis'])
+
     atoms.set_cell(c)
 
     if(  options.period != None ):
@@ -188,6 +244,15 @@ else:
     elif(oformat == "POSCAR"):
         write_vasp(ostream, atoms, label=options.comment, direct=False,sort=options.vaspsort,vasp5=options.vaspold)
     if(oformat == "xyz"):
+        c   = atoms.get_cell()
+        pbc = atoms.get_pbc()
+        fname = "answer.lvs"
+        if(os.path.isfile(fname)):
+            fname += ".new"
+        if( c != None and pbc.all()):
+            f    = open(fname, "w")
+            for i in range(3):
+                f.write(str(c[i][0]) + '    '+ str(c[i][1]) + '    ' +  str(c[i][2]) + '\n')
         write_xyz(ostream, atoms)
     if(oformat == "shtm"):
         d = {}
