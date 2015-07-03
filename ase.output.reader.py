@@ -14,6 +14,7 @@ from ase.io.aims import write_aims
 from ase.io.xyz  import write_xyz
 
 from optparse import OptionParser
+from ase.calculators.aims import Aims
 
 import asekk
 
@@ -81,6 +82,7 @@ if (options.atom  != None):
     atoms = (a,a)
 elif (options.atoms  != None):
     atoms = np.add(options.atoms,-1)
+    atoms[1] += 1
 else:
     step    = output[0]
     n_atoms = step.get_number_of_atoms()
@@ -106,8 +108,13 @@ if(n > 0):
                     write_xyz(sys.stdout,step,comment=comm)
 
             elif(options.get == "force"):
-                fs       = step.get_forces(apply_constraint=False)
-                fs_range = fs[atoms[0]:atoms[1]+1]
+#                calc = Aims()
+#                step.set_calculator(calc)
+                print  step._calc
+                fs       = step.get_forces(apply_constraint=True)
+                print fs
+                fs_range = fs[atoms[0]:atoms[1]]
+                atoms
                 f_total  = [0., 0., 0.]
                 for f in fs_range:
                     f_total += f

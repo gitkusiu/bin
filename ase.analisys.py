@@ -52,7 +52,7 @@ parser.add_option(       "--lc3",              action="store_true",   help="Get 
 #parser.add_option(      "--comment",          action="store",       type="string", help="his file was created by ase.convert.py script",     default='z')
 #parser.add_option(      "--vaspold",          action="store_false",                help="comment line",     default=True)
 #parser.add_option(      "--vaspsort",         action="store_true",                 help="comment line",     default=False)
-#parser.add_option(      "--xyzcell",          action="store",       type="string", help="file of xyz cell", default=xyzCellFile)
+parser.add_option(      "--xyzcell",          action="store",       type="string", help="file of xyz cell", default=xyzCellFile)
 (options, args) = parser.parse_args()
 
 ##TODO use this four lines to eliminate --trans variable
