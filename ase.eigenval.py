@@ -24,6 +24,7 @@ eigen=vasp.read_eigenvalues()
 #ax1.set_ylabel('Energy')
 
 x=[0.0,1.0]
+
 #line, = plt.plot(eigen, '--', linewidth=2)
 for y in eigen:
     plt.plot(x,[y,y], '-', color='k', linewidth=1)
