@@ -112,6 +112,16 @@ if(n > 0):
                 for f in fs_range:
                     f_total += f
                 print float(f_total[0]), float(f_total[1]), float(f_total[2])
+
+            elif(options.get == "charge"):
+                print step.has('charges')
+                rhos       = step.get_magnetic_moments()
+                rho_range  = rhos[atoms[0]:atoms[1]+1]
+                rho_total  = [0., 0., 0.]
+                for i in rho_range:
+                    rho_total += i
+                print float(rho_total[0]), float(rho_total[1]), float(rho_total[2])
+
 # >>>>>>>>>>>>>>>>>>>>>>>>> TODO <<<<<<<<<<<<<<<<<<<<<<<<<
 #        if(options.output == "xyz"):
 #            cell = output[0].get_cell()
