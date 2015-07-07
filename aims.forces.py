@@ -29,17 +29,16 @@ lines = f.read().splitlines()
 n=0
 
 for i, line in enumerate(lines):
-    if "The structure contains" in line:
-        l = line.split()
-        n = int(l[3])
-        break
+        if line.find("The structure contains")  != -1:
+            l = line.split()
+            n = int(l[3])
+            break
 
 print n
 f_tot = [0.,0.,0.]
 for i, line in enumerate(lines):
-    if 'atomic forces [eV/Ang]:' in line:
+    if line.find("atomic forces [eV/Ang]:")  != -1:
         for j in range (1,n+1):
-#            print a_range
             if( j>=a_range[0] and j<=a_range[1] ):
                 f_tmp = np.array(lines[i+1+j*7].split()[4:7])
                 f = f_tmp.astype(np.float)
