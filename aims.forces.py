@@ -41,9 +41,8 @@ for i, line in enumerate(lines):
         for j in range (1,n+1):
 #            print a_range
             if( j>=a_range[0] and j<=a_range[1] ):
-                f_tmp = np.array(lines[i+1+j*6].split()[4:7])
+                f_tmp = np.array(lines[i+1+j*7].split()[4:7])
                 f = f_tmp.astype(np.float)
                 f_tot += f
         print  float(f_tot[0]), float(f_tot[1]), float(f_tot[2])
-#        print f_tot
         f_tot = [0.,0.,0.]
