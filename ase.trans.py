@@ -253,7 +253,7 @@ else:
             f    = open(fname, "w")
             for i in range(3):
                 f.write(str(c[i][0]) + '    '+ str(c[i][1]) + '    ' +  str(c[i][2]) + '\n')
-        write_xyz(ostream, atoms)
+        write_xyz(ostream, atoms, comment=options.comment)
     if(oformat == "shtm"):
         d = {}
         f = open('species.dat', "r")
