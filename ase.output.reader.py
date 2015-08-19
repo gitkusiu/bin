@@ -110,9 +110,9 @@ if(n > 0):
             elif(options.get == "force"):
 #                calc = Aims()
 #                step.set_calculator(calc)
-                print  step._calc
+#                print  step._calc
                 fs       = step.get_forces(apply_constraint=True)
-                print fs
+#                print fs
                 fs_range = fs[atoms[0]:atoms[1]]
                 atoms
                 f_total  = [0., 0., 0.]
