@@ -66,6 +66,7 @@ parser.add_option(      "--copy",             action="store",        type="float
 
 parser.add_option(      "--comment",          action="store",        type="string", help="his file was created by ase.convert.py script",     default='z')
 parser.add_option(      "--vaspold",          action="store_false",                 help="comment line",     default=True)
+parser.add_option(      "--vaspdirect",       action="store_true",                  help="comment line",     default=False)
 parser.add_option(      "--vaspsort",         action="store_true",                  help="comment line",     default=False)
 parser.add_option(      "--xyzcell",          action="store",        type="string", help="file of xyz cell", default=xyzCellFile)
 (options, args) = parser.parse_args()
@@ -242,7 +243,7 @@ else:
 #    elif(oformat == "xsf"):
 #        write_xsf(sys.stdout,xsf[1],xsf[0])
     elif(oformat == "POSCAR"):
-        write_vasp(ostream, atoms, label=options.comment, direct=False,sort=options.vaspsort,vasp5=options.vaspold)
+        write_vasp(ostream, atoms, label=options.comment, direct=options.vaspdirect,sort=options.vaspsort,vasp5=options.vaspold)
     if(oformat == "xyz"):
         c   = atoms.get_cell()
         pbc = atoms.get_pbc()
