@@ -26,6 +26,8 @@ num = len(sys.argv)
 ifile = sys.argv[num-1]
 xyzCellFile = os.path.splitext(ifile)[0]+".lvs"
 
+bohr2ang=0.529177249
+
 parser = OptionParser()
 parser.add_option("-i", "--input",    action="store",       type="string", help="input file format")
 parser.add_option("-o", "--output",   action="store",       type="string", help="output file format")
@@ -62,9 +64,19 @@ else:
     opt_min = options.min
     opt_max = options.max
 
+    vol_orgin = [0.0,0.0,0.0]
 ####### READING THE FILE #############
     if(iformat == "cube"):
         field,  atoms  = read_cube(sys.argv[num-1],read_data=True)
+        f = open(sys.argv[num-1], 'r')
+        f.readline()
+        f.readline()
+        vol_orgin = np.array(f.readline().split()[1:4]).astype(float)
+#        print  vol_orgin
+        vol_orgin *= bohr2ang
+#        print  vol_orgin
+#        print  line
+
 
     cell  = np.array(atoms.get_cell())
     shape = np.array(field.shape)
@@ -123,15 +135,19 @@ else:
         if( opt_profy != None ):
             for i in range(shape[2]): print cell_mesh[1][i], field[nx, i,  nz  ]
         if( opt_profz != None ):
-            x = opt_profz[0]
-            y = opt_profz[1]
-            z = 1.0
+            x = opt_profz[0] - (vol_orgin[0])
+            y = opt_profz[1] - (vol_orgin[1])
+            z = 1.0          - (vol_orgin[2])
             a = ax*x + ay*y + az*z
             b = bx*x + by*y + bz*z
             c = cx*x + cy*y + cz*z
             nx = int(a*shape[0])
             ny = int(b*shape[1])
             nz = int(c*shape[2])
-            for i in range(shape[2]): print cell_mesh[2][i], field[nx, ny, i   ]
+            for i in range(shape[2]): print cell_mesh[2][i] + vol_orgin[2], field[nx, ny, i   ]
+
+            print nx,ny,nz
+            print shape
+            print vol_orgin
 
 
