@@ -72,10 +72,7 @@ else:
         f.readline()
         f.readline()
         vol_orgin = np.array(f.readline().split()[1:4]).astype(float)
-#        print  vol_orgin
         vol_orgin *= bohr2ang
-#        print  vol_orgin
-#        print  line
 
 
     cell  = np.array(atoms.get_cell())
@@ -121,29 +118,30 @@ else:
         ax = ( lvs[1][1]*lvs[2][2] - lvs[1][2]*lvs[2][1] ) / vol
         ay = ( lvs[1][2]*lvs[2][0] - lvs[1][0]*lvs[2][2] ) / vol
         az = ( lvs[1][0]*lvs[2][1] - lvs[1][1]*lvs[2][0] ) / vol
+        a = np.array([ax,ay,az])
 
         bx = ( lvs[2][1]*lvs[0][2] - lvs[2][2]*lvs[0][1] ) / vol
         by = ( lvs[2][2]*lvs[0][0] - lvs[2][0]*lvs[0][2] ) / vol
         bz = ( lvs[2][0]*lvs[0][1] - lvs[2][1]*lvs[0][0] ) / vol
+        b = np.array([bx,by,bz])
 
         cx = ( lvs[0][1]*lvs[1][2] - lvs[0][2]*lvs[1][1] ) / vol
         cy = ( lvs[0][2]*lvs[1][0] - lvs[0][0]*lvs[1][2] ) / vol
         cz = ( lvs[0][0]*lvs[1][1] - lvs[0][1]*lvs[1][0] ) / vol
-    
+        c = np.array([cx,cy,cz])
+
         if( opt_profx != None ):
             for i in range(shape[0]): print cell_mesh[0][i], field[i,  ny, nz  ]
         if( opt_profy != None ):
             for i in range(shape[2]): print cell_mesh[1][i], field[nx, i,  nz  ]
         if( opt_profz != None ):
-            x = opt_profz[0] - (vol_orgin[0])
-            y = opt_profz[1] - (vol_orgin[1])
-            z = 1.0          - (vol_orgin[2])
-            a = ax*x + ay*y + az*z
-            b = bx*x + by*y + bz*z
-            c = cx*x + cy*y + cz*z
-            nx = int(a*shape[0])
-            ny = int(b*shape[1])
-            nz = int(c*shape[2])
+            r  = np.array([opt_profz[0], opt_profz[1], 1.0] )
+            r  = r-vol_orgin
+            r2 = np.array([ a.dot(r), b.dot(r), c.dot(r) ])
+
+            nx = int(r2[0]*shape[0])
+            ny = int(r2[1]*shape[1])
+            nz = int(r2[2]*shape[2])
             for i in range(shape[2]): print cell_mesh[2][i] + vol_orgin[2], field[nx, ny, i   ]
 
             print nx,ny,nz
