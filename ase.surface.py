@@ -10,6 +10,7 @@ from ase.io.aims import write_aims
 
 from ase.lattice.surface import fcc111
 from ase.lattice.surface import fcc110
+from ase.lattice.surface import mx2
 import math
 from optparse import OptionParser
 
@@ -44,7 +45,8 @@ if(options.bravais == 'fcc'):
         atoms = fcc111(e, size=p,a=l, vacuum=v, orthogonal=options.ortogonal)
     elif(options.hkl == '110'):
         atoms = fcc110(e, size=p,a=l, vacuum=v)
-
+elif(options.bravais == 'MoS2'):
+    atoms = mx2(formula='MoS2', kind='2H', a=3.18, thickness=3.19, size=(1, 1, 1), vacuum=7.5)
 #c=atoms.get_cell()
 #c[1][0] += l*math.sqrt(2)*0.5
 #atoms.set_cell(c)

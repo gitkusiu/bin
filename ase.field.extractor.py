@@ -144,8 +144,8 @@ else:
             nz = int(r2[2]*shape[2])
             for i in range(shape[2]): print cell_mesh[2][i] + vol_orgin[2], field[nx, ny, i   ]
 
-            print nx,ny,nz
-            print shape
-            print vol_orgin
+#            print nx,ny,nz
+#            print shape
+#            print vol_orgin
 
 
