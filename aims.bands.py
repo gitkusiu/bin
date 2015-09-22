@@ -55,7 +55,7 @@ for i, line in enumerate(lines):
     if(r == None):
         r = array([1,nbands])
 
-    for j in range(r[0],r[1]):
+    for j in range(r[0],r[1]+1):
         sys.stdout.write(l[3+j*2]+"    ")
     sys.stdout.write("\n")
 
