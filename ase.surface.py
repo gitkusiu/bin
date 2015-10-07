@@ -10,7 +10,7 @@ from ase.io.aims import write_aims
 
 from ase.lattice.surface import fcc111
 from ase.lattice.surface import fcc110
-from ase.lattice.surface import mx2
+#from ase.lattice.surface import mx2
 import math
 from optparse import OptionParser
 
