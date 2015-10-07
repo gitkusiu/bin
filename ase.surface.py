@@ -20,8 +20,9 @@ parser.add_option("-p", "--periods",    action="store", type="int",    default=[
 parser.add_option("-v", "--vaccuum",    action="store", type="float", default=1.0)
 parser.add_option("-e", "--element",    action="store", type="string", default='H')
 parser.add_option("-o", "--ortogonal",  action="store_true", default=False)
-parser.add_option("-b", "--bravais",    action="store", type="string", default='fcc')
-parser.add_option(      "--hkl",        action="store", type="string", default='111')
+parser.add_option("-b", "--bravais",    action="store", type="string", default ='fcc')
+parser.add_option(      "--hkl",        action="store", type="string", default ='111')
+parser.add_option("-c", "--cell",       action="store", type="float",  nargs=6)
 
 
 (options, args) = parser.parse_args()
@@ -52,6 +53,13 @@ elif(options.bravais == 'MoS2'):
 #atoms.set_cell(c)
 
 #atoms.translate([0.0,0.0,-14.9999999999999982])
+
+
+if(options.cell != None):
+    to_remove = []
+    for i, atom in enumerate(atoms):
+        r = atom.position.astype(float)
+        print i, atom, r
 
 print atoms
 tmpname="geometry.in.tmp"

@@ -35,6 +35,7 @@ parser.add_option("-o", "--output",           action="store",       type="string
 parser.add_option("-a", "--atoms",            action="store",       type="int",    help="specify the atoms to whcih changes (translation rotation etc. will be made)", nargs=2)
 parser.add_option("-t", "--translate_vector", action="store",       type="float",  help="Vector of translation", nargs=3)
 parser.add_option("-s", "--scale",            action="store",       type="float",  help="Vector of translation")
+parser.add_option("-w", "--wrap",             action="store_true",  help="Wrap atoms into the unitcell")
 parser.add_option("-r", "--rotate_angle",     action="store",       type="float",  help="Angle  of rotation")
 parser.add_option(      "--rotate_around",    action="store",       type="int",    help="Number of atom around which rotation should be performed")
 parser.add_option(      "--rotate_axis",      action="store",       type="string", help="Rotation axis",  default='z')
@@ -144,9 +145,6 @@ else:
                 atoms += Atom(symbol, pos)
 
 
-#     TODO wrapper to the unit cell
-
-
     if( options.scale != None ):
         s = options.scale
         for r in atoms.arrays['positions']:
@@ -229,6 +227,10 @@ else:
         atoms = atoms * dim
 
 
+    if( options.wrap == True):
+        atoms.wrap()
+
+
 
     # >>>>>>>>>>>>>>>>>>>>> WRITE GEOMETRY <<<<<<<<<<<<<<<<<<<<
     if(oformat == "geometry.in"):
@@ -254,7 +256,8 @@ else:
             f    = open(fname, "w")
             for i in range(3):
                 f.write(str(c[i][0]) + '    '+ str(c[i][1]) + '    ' +  str(c[i][2]) + '\n')
-        write_xyz(ostream, atoms, comment=options.comment)
+        #write_xyz(ostream, atoms, comment=options.comment)
+        write_xyz(ostream, [atoms], comment=options.comment)
     if(oformat == "shtm"):
         d = {}
         f = open('species.dat', "r")
