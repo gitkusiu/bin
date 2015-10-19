@@ -6,6 +6,7 @@
 import sys
 import os.path
 import numpy as np
+import math
 
 from ase import Atom
 from ase.io.aims import read_aims
@@ -36,6 +37,8 @@ parser.add_option("-a", "--atoms",            action="store",       type="int", 
 parser.add_option("-t", "--translate_vector", action="store",       type="float",  help="Vector of translation", nargs=3)
 parser.add_option("-s", "--scale",            action="store",       type="float",  help="Vector of translation")
 parser.add_option("-w", "--wrap",             action="store_true",  help="Wrap atoms into the unitcell")
+parser.add_option("-c", "--crop",             action="store_true",  help="Crop structure by supercell")
+parser.add_option(      "--set_constraint",   action="store_true",  help="Set constraints")
 parser.add_option("-r", "--rotate_angle",     action="store",       type="float",  help="Angle  of rotation")
 parser.add_option(      "--rotate_around",    action="store",       type="int",    help="Number of atom around which rotation should be performed")
 parser.add_option(      "--rotate_axis",      action="store",       type="string", help="Rotation axis",  default='z')
@@ -229,6 +232,43 @@ else:
 
     if( options.wrap == True):
         atoms.wrap()
+
+
+    if( options.crop == True):
+        rs  = atoms.get_positions()
+
+        #obtain a copy of positions and wrap them to the supercell
+        atoms2 = atoms.copy()
+        atoms2.wrap()
+        rs2 = atoms2.get_positions()
+
+        # check which positions has not changed
+        the_same_r =  np.zeros((len(rs)), dtype=bool)
+        epsilon = 0.001
+        for i, x in enumerate(rs):
+            r  = np.array(x)
+            r2 = np.array(rs2[i])
+            dr = np.linalg.norm(r-r2)
+            if (math.fabs(dr) <= epsilon):
+                the_same_r[i] = True
+        # specify those positions which have been wrapped
+        wraped = np.ones((len(the_same_r)), dtype=bool)
+        for i, x in enumerate(the_same_r):
+            if x.all():
+                wraped[i] = False
+
+        # remove wraped
+        n=0
+        for i, x in enumerate(wraped):
+#            print i, x, n,len(atoms)
+            if x:
+#                print "in",i-n
+                atoms.pop(i-n)
+                n+=1
+
+
+#    if( options.set_constraint == True):
+
 
 
 
