@@ -12,4 +12,3 @@ print xsf[0]
 #write_cube(sys.stdout,xsf[1],xsf[0])
 #write_cube("tmp.cube",xsf[1],xsf[0])
 
-
