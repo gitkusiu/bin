@@ -38,5 +38,5 @@ else:
                 p=options.period
                 if(p != None):
                     step = step*(p[0], p[1], p[2])
-                write_xyz(sys.stdout,step,comment=comm)
+                write_xyz(sys.stdout,[step],comment=comm)
 #                print step.
