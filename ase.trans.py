@@ -36,6 +36,8 @@ parser.add_option("-o", "--output",           action="store",       type="string
 parser.add_option("-a", "--atoms",            action="store",       type="int",    help="specify the atoms to whcih changes (translation rotation etc. will be made)", nargs=2)
 parser.add_option("-t", "--translate_vector", action="store",       type="float",  help="Vector of translation", nargs=3)
 parser.add_option("-s", "--scale",            action="store",       type="float",  help="Vector of translation")
+parser.add_option(      "--scalex",           action="store",       type="float",  help="Vector of translation")
+parser.add_option(      "--scaley",           action="store",       type="float",  help="Vector of translation")
 parser.add_option("-w", "--wrap",             action="store_true",  help="Wrap atoms into the unitcell")
 parser.add_option("-c", "--crop",             action="store_true",  help="Crop structure by supercell")
 parser.add_option(      "--set_constraint",   action="store_true",  help="Set constraints")
@@ -155,6 +157,31 @@ else:
         if atoms.get_cell().shape == (3,3):
             for c in atoms._cell:
                 c *= s
+
+
+    if( options.scalex != None ):
+        s = options.scalex
+        print s
+        for i , r in enumerate(atoms.arrays['positions']):
+            if i in range(trange[0]-1, trange[1]):
+                r[0] *= s
+        if atoms.get_cell().shape == (3,3):
+            for c in atoms._cell:
+                c[0] *= s
+
+
+    if( options.scaley != None ):
+        s = options.scaley
+        print s
+        for i , r in enumerate(atoms.arrays['positions']):
+            if i in range(trange[0]-1, trange[1]):
+                r[1] *= s
+        if atoms.get_cell().shape == (3,3):
+            for c in atoms._cell:
+                c[1] *= s
+
+
+
 
     if(options.rotate_angle != None):
         angle     = options.rotate_angle

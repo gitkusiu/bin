@@ -19,8 +19,10 @@ from ase.io.cube import write_cube
 from ase.io.vasp import write_vasp
 from ase.io.xsf  import write_xsf
 from ase.io.xyz  import write_xyz
+from ase.calculators.vasp import VaspChargeDensity
 
 from optparse import OptionParser
+
 
 num = len(sys.argv)
 ifile = sys.argv[num-1]
@@ -32,7 +34,8 @@ parser.add_option("-o", "--output",   action="store",       type="string", help=
 parser.add_option("-g", "--get",      action="store",       type="string", help="Type of data we want to get")
 parser.add_option(      "--gradient", action="store",       type="string", help="Calculate derrivative allong x y or z direction")
 parser.add_option(      "--diff",     action="store_true",                 help="Calculate difference between field 1 and field 2")
-parser.add_option(      "--times",    action="store",       type="string", help="Calculate derrivative allong x y or z direction")
+parser.add_option(      "--clip",     action="store",       type="float" , help="cut out all values out of the range", nargs=2)
+parser.add_option(      "--times",    action="store",       type="float", help="Calculate derrivative allong x y or z direction")
 parser.add_option(      "--comment",  action="store",       type="string", help="comment line",     default="this file was created by ase.convert.py script")
 (options, args) = parser.parse_args()
 
@@ -67,8 +70,11 @@ else:
                 print "WARRNING: geometries of the system are not the same"
         else:
             field,  atoms  = read_cube(sys.argv[num-1],read_data=True)
-
-
+    elif(iformat == "locpot"):
+        locpot = VaspChargeDensity(filename = sys.argv[num-1])
+        field = locpot.chg[-1]
+        atoms = locpot.atoms[-1]
+        del locpot
 
 ####### MANIPULATE #############
     get = options.get
@@ -96,14 +102,28 @@ else:
     if(opt_diff):
         field -= field2
 
+    if(options.clip != None):
+        c = options.clip
+        field = np.clip(field,c[0], c[1])
+
+    if(options.times != None):
+        x = options.times
+        field *= x
+
 
 ####### WRITEING THE FILE #############
     if(oformat == "xsf"):
 #        write_xsf(sys.stdout,field[1],field[0])
         write_xsf(sys.stdout,atoms,field)
-    if(oformat == "cube"):
+    elif(oformat == "cube"):
         print "Warrning: Third line should contain number of atoms together with position of the origin of the volumetric data."
         print "Warrning: Make sure it contain corrrect data."
         write_cube(sys.stdout,atoms,field)
+    elif(oformat == "locpot"):
+        locpot_out = VaspChargeDensity(filename=None)
+        locpot_out.atoms=[atoms,]
+        locpot_out.chg=[field,]
+        locpot_out.write(filename=sys.argv[num-1]+".out",format="chgcar")
+
 
 
