@@ -35,12 +35,15 @@ parser.add_option("-o", "--output",           action="store",       type="string
 #parser.add_option("-t", "--trans",            action="store",       type="string", help="Transformation to be done")
 parser.add_option("-a", "--atoms",            action="store",       type="int",    help="specify the atoms to whcih changes (translation rotation etc. will be made)", nargs=2)
 parser.add_option("-t", "--translate_vector", action="store",       type="float",  help="Vector of translation", nargs=3)
+parser.add_option(      "--translate_along", action="store",       type="float",   help="Translate along vector by certain value", nargs=4)
+parser.add_option(      "--translate_along_atoms", action="store",       type="float",   help="Translate along vector by certain value", nargs=3)
 parser.add_option("-s", "--scale",            action="store",       type="float",  help="Vector of translation")
 parser.add_option(      "--scalex",           action="store",       type="float",  help="Vector of translation")
 parser.add_option(      "--scaley",           action="store",       type="float",  help="Vector of translation")
 parser.add_option("-w", "--wrap",             action="store_true",  help="Wrap atoms into the unitcell")
 parser.add_option("-c", "--crop",             action="store_true",  help="Crop structure by supercell")
-parser.add_option(      "--set_constraint",   action="store_true",  help="Set constraints")
+parser.add_option(      "--set_constraint",   action="store_true",  help="")
+parser.add_option(      "--select",           action="store_true",  help="Remove atoms which are not selected")
 parser.add_option("-r", "--rotate_angle",     action="store",       type="float",  help="Angle  of rotation")
 parser.add_option(      "--rotate_around",    action="store",       type="int",    help="Number of atom around which rotation should be performed")
 parser.add_option(      "--rotate_axis",      action="store",       type="string", help="Rotation axis",  default='z')
@@ -75,6 +78,7 @@ parser.add_option(      "--vaspold",          action="store_false",             
 parser.add_option(      "--vaspdirect",       action="store_true",                  help="comment line",     default=False)
 parser.add_option(      "--vaspsort",         action="store_true",                  help="comment line",     default=False)
 parser.add_option(      "--xyzcell",          action="store",        type="string", help="file of xyz cell", default=xyzCellFile)
+
 (options, args) = parser.parse_args()
 
 #TODO use this four lines to eliminate --trans variable
@@ -128,6 +132,25 @@ else:
     # atoms selection for modyfiactions
     if(trange == None): # # default range of atoms
         trange = (1, natoms)
+
+
+
+    if( options.translate_along_atoms != None ):
+        args      = options.translate_along_atoms
+        positions = atoms.arrays['positions']
+        r1   = positions[args[0]-1]
+        r2   = positions[args[1]-1]
+        t    = (r2-r1).tolist()
+        t.append(args[2])
+        options.translate_along = t
+
+    if( options.translate_along != None ):
+        arg   = options.translate_along
+        r     = arg[0:3]
+        dr    = arg[3]
+        rnorm = np.linalg.norm(r)
+        v     = np.multiply(r,dr/rnorm)
+        options.translate_vector = v.tolist()
 
     if( options.translate_vector != None ):
         v                               = options.translate_vector
@@ -293,6 +316,14 @@ else:
                 atoms.pop(i-n)
                 n+=1
 
+
+    if( options.select == True):
+        atoms2 = atoms.copy()
+        n=0
+        for i, x in enumerate(atoms2):
+            if i not in range(trange[0]-1, trange[1]):
+                atoms.pop(i-n)
+                n+=1
 
 #    if( options.set_constraint == True):
 

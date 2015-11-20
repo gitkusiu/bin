@@ -36,6 +36,7 @@ parser.add_option(      "--gradient", action="store",       type="string", help=
 parser.add_option(      "--diff",     action="store_true",                 help="Calculate difference between field 1 and field 2")
 parser.add_option(      "--clip",     action="store",       type="float" , help="cut out all values out of the range", nargs=2)
 parser.add_option(      "--times",    action="store",       type="float", help="Calculate derrivative allong x y or z direction")
+parser.add_option(      "--plus",    action="store",       type="float", help="Calculate derrivative allong x y or z direction")
 parser.add_option(      "--comment",  action="store",       type="string", help="comment line",     default="this file was created by ase.convert.py script")
 (options, args) = parser.parse_args()
 
@@ -109,6 +110,17 @@ else:
     if(options.times != None):
         x = options.times
         field *= x
+
+    if(options.plus != None):
+        plus = options.plus
+        field += plus
+        print plus, min(field),  max(field)
+#        for i,x in enumerate(field):
+#            for j,y in enumerate(x):
+#                for k,z in enumerate(y):
+#                    field[i][j][k] += plus
+#        print field.shape
+#        field = field +
 
 
 ####### WRITEING THE FILE #############

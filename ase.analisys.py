@@ -35,6 +35,7 @@ parser.add_option("-a",  "--atoms",            action="store",        type="int"
 parser.add_option("-d",  "--distance",         action="store_true",   help="Get distance between two atoms")
 parser.add_option("-v",  "--vector",           action="store_true",   help="Get distance vector between two atoms")
 parser.add_option("-n",  "--no_atoms",         action="store_true",   help="Get number of atoms")
+parser.add_option(       "--enumerate",         action="store_true",  help="Enumerate an atoms")
 parser.add_option(       "--lc1",              action="store_true",   help="Get Lenght of cell1")
 parser.add_option(       "--lc2",              action="store_true",   help="Get Lenght of cell2")
 parser.add_option(       "--lc3",              action="store_true",   help="Get Lenght of cell3")
@@ -109,6 +110,11 @@ else:
     if(options.distance == True):
         a = options.atoms
         print atoms.get_distance(a[0],a[1])
+
+    if(options.enumerate == True):
+        chem = atoms.get_chemical_symbols()
+        for i, r in enumerate(atoms.arrays['positions']):
+            print i+1, chem[i], r
 
     if(options.no_atoms == True):
         print atoms.get_number_of_atoms()
