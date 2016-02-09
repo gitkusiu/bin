@@ -94,13 +94,13 @@ else:
     if( opt_av != None ):
         if  ( opt_av == "x" ):
             r = np.arange(0.0,l[0],dr[0])
-            for i in range(shape[0]): print r[i], np.average(field[i,:,:])
+            for i in range(shape[0]): print cell_mesh[0][i] + vol_orgin[0], np.average(field[:,:,i])
         if  ( opt_av == "y" ):
             r = np.arange(0.0,l[1],dr[1])
-            for i in range(shape[1]): print r[i], np.average(field[:,i,:])
+            for i in range(shape[1]): print cell_mesh[1][i] + vol_orgin[1], np.average(field[:,:,i])
         elif( opt_av == "z" ):
             r = np.arange(0.0,l[2],dr[2])
-            for i in range(shape[2]): print r[i], np.average(field[:,:,i])
+            for i in range(shape[2]): print cell_mesh[2][i] + vol_orgin[2], np.average(field[:,:,i])
 
 
     opt_profx  = options.profileX

@@ -128,8 +128,8 @@ else:
 #        write_xsf(sys.stdout,field[1],field[0])
         write_xsf(sys.stdout,atoms,field)
     elif(oformat == "cube"):
-        print "Warrning: Third line should contain number of atoms together with position of the origin of the volumetric data."
-        print "Warrning: Make sure it contain corrrect data."
+#        print "Warrning: Third line should contain number of atoms together with position of the origin of the volumetric data."
+#        print "Warrning: Make sure it contain corrrect data."
         write_cube(sys.stdout,atoms,field)
     elif(oformat == "locpot"):
         locpot_out = VaspChargeDensity(filename=None)
