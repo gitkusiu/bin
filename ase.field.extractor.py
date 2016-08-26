@@ -33,6 +33,7 @@ parser.add_option("-i", "--input",    action="store",       type="string", help=
 parser.add_option("-o", "--output",   action="store",       type="string", help="output file format")
 parser.add_option("-g", "--get",      action="store",       type="string", help="Type of data we want to get")
 parser.add_option(      "--average",  action="store",       type="string", help="Calculate derrivative allong x y or z direction")
+parser.add_option(      "--sum",  action="store",       type="string", help="Calculate derrivative allong x y or z direction")
 parser.add_option(      "--profileX", action="store",       type="float", help="Calculate derrivative allong x y or z direction", nargs=2)
 parser.add_option(      "--profileY", action="store",       type="float", help="Calculate derrivative allong x y or z direction", nargs=2)
 parser.add_option(      "--profileZ", action="store",       type="float", help="Calculate derrivative allong x y or z direction", nargs=2)
@@ -73,9 +74,13 @@ else:
         f.readline()
         vol_orgin = np.array(f.readline().split()[1:4]).astype(float)
         vol_orgin *= bohr2ang
+    elif(iformat == "xsf"):
+        field   = read_xsf(sys.argv[num-1],read_data=True)
+#       field,  atoms  = read_xsf(sys.argv[num-1],read_data=True)
 
 
     cell  = np.array(atoms.get_cell())
+    print cell
     shape = np.array(field.shape)
     dr    = np.empty(3)            # gradation of unit cell
     for i in range(3):
@@ -101,6 +106,11 @@ else:
         elif( opt_av == "z" ):
             r = np.arange(0.0,l[2],dr[2])
             for i in range(shape[2]): print cell_mesh[2][i] + vol_orgin[2], np.average(field[:,:,i])
+
+    if( options.sum != None ):
+        if( options.sum == "z" ):
+            r = np.arange(0.0,l[2],dr[2])
+            for i in range(shape[2]): print cell_mesh[2][i] + vol_orgin[2], 0.000807451*np.sum(field[:,:,i])
 
 
     opt_profx  = options.profileX

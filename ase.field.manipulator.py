@@ -101,7 +101,8 @@ else:
 #    print field
 #    print field2
     if(opt_diff):
-        field -= field2
+#        field -= field2
+        field = field-field2
 
     if(options.clip != None):
         c = options.clip
