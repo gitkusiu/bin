@@ -20,6 +20,7 @@ from ase.io.cube import write_cube
 from ase.io.vasp import write_vasp
 from ase.io.xsf  import write_xsf
 from ase.io.xyz  import write_xyz
+from ase.utils.geometry import sort
 
 from optparse import OptionParser
 
@@ -40,6 +41,7 @@ parser.add_option(      "--translate_along_atoms", action="store",       type="f
 parser.add_option("-s", "--scale",            action="store",       type="float",  help="Vector of translation")
 parser.add_option(      "--scalex",           action="store",       type="float",  help="Vector of translation")
 parser.add_option(      "--scaley",           action="store",       type="float",  help="Vector of translation")
+parser.add_option(      "--sortz",            action="store_true",  help="Wrap atoms into the unitcell")
 parser.add_option("-w", "--wrap",             action="store_true",  help="Wrap atoms into the unitcell")
 parser.add_option("-c", "--crop",             action="store_true",  help="Crop structure by supercell")
 parser.add_option(      "--set_constraint",   action="store_true",  help="")
@@ -283,6 +285,9 @@ else:
     if( options.wrap == True):
         atoms.wrap()
 
+    if( options.sortz == True):
+        pozz=atoms.positions[:,2]
+        atoms = sort(atoms,pozz)
 
     if( options.crop == True):
         rs  = atoms.get_positions()

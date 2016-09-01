@@ -32,6 +32,7 @@ natom = a_range[0]
 for i, line in enumerate(lines):    
     if line.find("Total forces({0:{width}})".format(natom,width=4))  != -1:
         f = np.array(line.split()[4:7]).astype(np.float)
+#        print  "KK", float(f_tot[0]), float(f_tot[1]), float(f_tot[2]),  float(f[0]), float(f[1]), float(f[2])
         f_tot += f
         natom += 1
         if (natom > a_range[1]):
