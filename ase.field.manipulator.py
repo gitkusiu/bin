@@ -33,10 +33,10 @@ parser.add_option("-i", "--input",    action="store",       type="string", help=
 parser.add_option("-o", "--output",   action="store",       type="string", help="output file format")
 parser.add_option("-g", "--get",      action="store",       type="string", help="Type of data we want to get")
 parser.add_option(      "--gradient", action="store",       type="string", help="Calculate derrivative allong x y or z direction")
-parser.add_option(      "--diff",     action="store_true",                 help="Calculate difference between field 1 and field 2")
+parser.add_option(      "--diff",     action="store_true"                , help="Calculate difference between field 1 and field 2")
 parser.add_option(      "--clip",     action="store",       type="float" , help="cut out all values out of the range", nargs=2)
-parser.add_option(      "--times",    action="store",       type="float", help="Calculate derrivative allong x y or z direction")
-parser.add_option(      "--plus",    action="store",       type="float", help="Calculate derrivative allong x y or z direction")
+parser.add_option(      "--times",    action="store",       type="float" , help="Calculate derrivative allong x y or z direction")
+parser.add_option(      "--plus",     action="store",       type="float" , help="Calculate derrivative allong x y or z direction")
 parser.add_option(      "--comment",  action="store",       type="string", help="comment line",     default="this file was created by ase.convert.py script")
 (options, args) = parser.parse_args()
 
